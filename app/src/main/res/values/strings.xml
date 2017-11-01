@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">CarTracker</string>
+    <string name="location_permission_accept">Для продолжения нужно разрешить доступ к местоположению</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="choose_date">"Выберите дату"</string>
+    <string name="map_follow">"Карта следует за вами"</string>
+    <string name="map_un_follow">""</string>
+    <string name="pop_up_menu_my_location">"Мое местоположение"</string>
+    <string name="pop_up_menu_favorites">"Избранное"</string>
+    <string name="pop_up_menu_set_on_map">"Указать на карте"</string>
+    <string name="pop_up_menu_search">"Найти..."</string>
+</resources>

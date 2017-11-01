@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "309735605732",
+    "firebase_url": "https://car-tracker-849cb.firebaseio.com",
+    "project_id": "car-tracker-849cb",
+    "storage_bucket": "car-tracker-849cb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309735605732:android:ee2583b27ed01d1e",
+        "android_client_info": {
+          "package_name": "com.tracker.lantimat.cartracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "309735605732-3dn37kfk5735icas19dr8eucl4suo20u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tracker.lantimat.cartracker",
+            "certificate_hash": "df48947ef09c7342efd22fd3fa65036719b33f70"
+          }
+        },
+        {
+          "client_id": "309735605732-g9pa89rh31q18mb6k3u27ddvfpkhdhla.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMWyhs-pB_dMZ2tFKkymX2tjdj7yWezfc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "309735605732-g9pa89rh31q18mb6k3u27ddvfpkhdhla.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
