@@ -6,8 +6,9 @@ package com.tracker.lantimat.cartracker.utils;
 
 public class FbConstants {
 
+    public static final int ID = 1;
+
     public static final String TRACKS = "tracks";
-
-
     public static final String CARS = "cars";
+    public static final String USERS = "users";
 }

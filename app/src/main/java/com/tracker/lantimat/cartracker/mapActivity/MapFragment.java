@@ -13,6 +13,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -29,10 +30,13 @@ import android.widget.Toast;
 
 import com.tracker.lantimat.cartracker.R;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
+import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
 import com.tracker.lantimat.cartracker.utils.CarItemizedOverlay;
+import com.tracker.lantimat.cartracker.utils.KindleGeoPointHelper;
 import com.tracker.lantimat.cartracker.utils.MyOwnItemizedOverlay;
 
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -60,7 +64,7 @@ import static android.content.Context.LOCATION_SERVICE;
  * Created by GabdrakhmanovII on 28.07.2017.
  */
 
-public class MapFragment extends Fragment implements LocationListener, MapActivity.MapFragmentUpdateListener {
+public class MapFragment extends Fragment implements LocationListener, MapActivity.MapFragmentUpdateListener{
 
 
     final static String TAG = "MapFragment";
@@ -76,8 +80,8 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
     private CompassOverlay mCompassOverlay;
     private ScaleBarOverlay mScaleBarOverlay;
     private RotationGestureOverlay mRotationGestureOverlay;
-    protected ImageButton btCenterMap;
-    protected ImageButton btFollowMe;
+    protected ImageButton btZoomIn;
+    protected ImageButton btZoomOut;
     private LocationManager lm;
     private Location currentLocation = null;
     private boolean followLocation = false;
@@ -101,6 +105,8 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
     ItemizedIconOverlay<OverlayItem> anotherItemizedIconOverlay = null;
     public ArrayList<Track> arTrackForMarker = new ArrayList<Track>();
 
+    GeoPoint lastGeopoint;
+    int state;
 
     //ArrayList<OverlayItem> carItems = new ArrayList<OverlayItem>();
 
@@ -184,7 +190,8 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
             currentLocation = location;
             mMapView.getController().setZoom(12);
             mMapView.getController().setCenter(new GeoPoint(location.getLatitude(), location.getLongitude()));
-            addLocationMarker(new GeoPoint(location.getLatitude(), location.getLongitude()));
+            //addLocationMarker(new GeoPoint(location.getLatitude(), location.getLongitude()));
+            //addLocationMarker(new GeoPoint(location.getLatitude(), location.getLongitude()));
         }
 
 
@@ -195,9 +202,14 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
         this.mCompassOverlay = new CompassOverlay(context, new InternalCompassOrientationProvider(context),
                 mMapView);
 
+
+        GpsMyLocationProvider provider = new GpsMyLocationProvider(context);
+        provider.addLocationSource(LocationManager.NETWORK_PROVIDER);
+
         //Добавляет на карту иконку с местоположением
-        this.mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(context),
+        this.mLocationOverlay = new MyLocationNewOverlay(provider,
                 mMapView);
+
 
         mScaleBarOverlay = new ScaleBarOverlay(mMapView);
         mScaleBarOverlay.setCentred(true);
@@ -221,40 +233,23 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
         mLocationOverlay.setOptionsMenuEnabled(true);
         //mCompassOverlay.enableCompass();
 
-        btCenterMap = (ImageButton) view.findViewById(R.id.ic_center_map);
+        btZoomIn = (ImageButton) view.findViewById(R.id.ic_center_map);
 
         //Кнопка для центрирование карты по местоположение
-        btCenterMap.setOnClickListener(new View.OnClickListener() {
+        btZoomIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "centerMap clicked ");
-                //Log.i(TAG, "current location " + currentLocation);
-                if (currentLocation != null) {
-                    GeoPoint myPosition = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
-                    addLocationMarker(myPosition);
-                    moveCameraToCurrentLocation();
-                }
+                mMapView.getController().zoomIn();
             }
         });
 
-        btFollowMe = (ImageButton) view.findViewById(R.id.ic_follow_me);
+        btZoomOut = (ImageButton) view.findViewById(R.id.ic_follow_me);
 
         //Кнопка для вкл/выкл режима следования за местоположением
-        btFollowMe.setOnClickListener(new View.OnClickListener() {
+        btZoomOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "btFollowMe clicked ");
-                if (!mLocationOverlay.isFollowLocationEnabled()) {
-                    mLocationOverlay.enableFollowLocation();
-                    followLocation = true;
-                    //btFollowMe.setImageResource(R.drawable.ic_near_me_black_24dp);
-                    //Toast.makeText(getContext(), R.string.map_follow, Toast.LENGTH_SHORT).show();
-
-                } else {
-                    followLocation = false;
-                    mLocationOverlay.disableFollowLocation();
-                    //btFollowMe.setImageResource(R.drawable.ic_navigation_black_24dp);
-                }
+                mMapView.getController().zoomOut();
             }
         });
 
@@ -316,7 +311,11 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
 
         //mMapView.getController().setZoom(14);
         //mMapView.getController().animateTo(g);
-        mMapView.getController().setCenter(g);
+        if(state == BottomSheetBehavior.STATE_EXPANDED) {
+            final GeoPoint adjustedCenter = adjustCentreByPadding(g.getLatitude(), g.getLongitude(), false);
+            mMapView.getController().setCenter(adjustedCenter);
+        } else mMapView.getController().setCenter(g);
+
 
     }
 
@@ -380,6 +379,13 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
         }
     }
 
+    private GeoPoint adjustCentreByPadding(final double latitude, final double longitude, boolean negate) {
+        final int newY = negate ? (int) (mMapView.getHeight()/2  - mMapView.getHeight()/4) : (int) (mMapView.getHeight()/2 + mMapView.getHeight()/4);
+        mMapView.getController().setCenter(new org.osmdroid.util.GeoPoint(latitude, longitude));
+        final IGeoPoint offset = mMapView.getProjection().fromPixels(mMapView.getWidth()/2, newY);
+        return KindleGeoPointHelper.fromIGeoPointToRoverGeoPoint(offset);
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -438,17 +444,17 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
         mCompassOverlay = null;
         mScaleBarOverlay = null;
         mRotationGestureOverlay = null;
-        btCenterMap = null;
-        btFollowMe = null;
+        btZoomIn = null;
+        btZoomOut = null;
     }
 
 
     @Override
     public void onLocationChanged(Location location) {
         currentLocation = location;
-        Log.d(TAG, "Current location " + location.toString());
-        addLocationMarker(new GeoPoint(location.getLatitude(), location.getLongitude()));
-        if (followLocation) moveCameraToCurrentLocation();
+        //Log.d(TAG, "Current location " + location.toString());
+        //addLocationMarker(new GeoPoint(location.getLatitude(), location.getLongitude()));
+        //if (followLocation) moveCameraToCurrentLocation();
     }
 
     @Override
@@ -458,12 +464,10 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
 
     @Override
     public void onProviderEnabled(String s) {
-
     }
 
     @Override
     public void onProviderDisabled(String s) {
-
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
@@ -583,7 +587,8 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
     public void clearPath() {
 
         mMapView.getOverlayManager().remove(pathOverlay); //Удаляем трек
-        if(pathMarkersOverlay !=null) mMapView.getOverlayManager().remove(pathMarkersOverlay); //Удаляем маркеры
+        if(pathMarkersOverlay !=null) mMapView.getOverlayManager().remove(pathMarkersOverlay); //Удаляем Оверлей маркеры
+        if(overlayItemArray!= null) overlayItemArray.clear(); //Чистим массив с маркерами
         if (showTrackCarOverlay.size() > 0) showTrackCarOverlay.removeItem(0); //Удаляем иконку машины, которая в данный момент показывает путь
 
         mMapView.invalidate(); //Перерисовка
@@ -610,10 +615,12 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
     @Override
     public void showTrackingCarPositionMarker(Track track) {
         if (showTrackCarOverlay.size() > 0) showTrackCarOverlay.removeItem(0);
+
         OverlayItem olItem = new OverlayItem("", "", new GeoPoint(track.getGeoPoint().getLatitude(), track.getGeoPoint().getLongitude()));//marker
         olItem.setMarker(getResources().getDrawable(R.drawable.car));
         showTrackCarOverlay.addItem(olItem);
-        moveCameraToGeopointLocation(new GeoPoint(track.getGeoPoint().getLatitude(), track.getGeoPoint().getLongitude()));
+        GeoPoint g = new GeoPoint(track.getGeoPoint().getLatitude(), track.getGeoPoint().getLongitude());
+        moveCameraToGeopointLocation(g);
         mMapView.invalidate();
 
         Log.d(TAG, "showTrackingCarPositionMarker");
@@ -622,5 +629,23 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
     @Override
     public void showCars(ArrayList<Cars> cars, int selectedPosition) {
         addCars(cars, selectedPosition);
+    }
+
+    @Override
+    public void onBottomSheetsStateChange(int state) {
+        this.state = state;
+        GeoPoint g = new GeoPoint(mMapView.getMapCenter().getLatitude(), mMapView.getMapCenter().getLongitude());
+        if(state == BottomSheetBehavior.STATE_EXPANDED) {
+            lastGeopoint = g;
+            final GeoPoint adjustedCenter = adjustCentreByPadding(g.getLatitude(), g.getLongitude(), false);
+            mMapView.getController().animateTo(adjustedCenter);
+        } else if(state == BottomSheetBehavior.STATE_COLLAPSED) {
+            if(lastGeopoint!=null) {
+                final GeoPoint adjustedCenter = adjustCentreByPadding(g.getLatitude(), g.getLongitude(), true);
+                mMapView.getController().animateTo(adjustedCenter);
+                lastGeopoint = null;
+            }
+
+        }
     }
 }

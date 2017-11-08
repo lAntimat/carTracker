@@ -28,11 +28,11 @@ public class BottomSheetsCar {
 
     public MyClickListener prevBtnClick;
     public MyClickListener nextBtnClick;
-    private BottomSheetBehavior bottomSheetBehavior;
+    public BottomSheetBehavior bottomSheetBehavior;
     private Context context;
     private MapActivity activity;
     private ImageView btnPrev, btnNext;
-    private TextView tvName, tvSub, tvDate, tvSpeed;
+    private TextView tvName, tvSub, tvStatus, tvSpeed;
 
     private ProgressBar progressBar;
     private SeekBar seekBar;
@@ -59,14 +59,13 @@ public class BottomSheetsCar {
         //bottomSheetBehavior.setPeekHeight(peakView.getHeight());
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         //peakView.requestLayout();
-
         initView();
     }
 
     private void initView() {
-        tvName = (TextView) l.findViewById(R.id.tvName);
-        tvSub = (TextView) l.findViewById(R.id.tvSub);
-        tvDate = (TextView) l.findViewById(R.id.tvDate);
+        tvName = (TextView) l.findViewById(R.id.tvTitle);
+        tvSub = (TextView) l.findViewById(R.id.tvSubTitle);
+        tvStatus = (TextView) l.findViewById(R.id.tvStatus);
         tvSpeed = (TextView) l.findViewById(R.id.tvSpeed);
 
         btnNext = (ImageView) l.findViewById(R.id.ivNext);
@@ -115,11 +114,11 @@ public class BottomSheetsCar {
         tvSpeed.setText(speed);
     }
 
-    public void setDate(Date date)
-    {
+    public void setDate(Date date) {
         SimpleDateFormat df = new SimpleDateFormat("MM/dd HH:mm:ss");
-        tvDate.setText(df.format(date));
+        tvStatus.setText(df.format(date));
     }
+
     public void setSeekBarMax(int max) {
         if (max != 0) seekBar.setMax(max - 1);
         seekBar.setProgress(0);
@@ -131,7 +130,7 @@ public class BottomSheetsCar {
 
 
     public void setState(int state) {
-        if(state == BottomSheetBehavior.STATE_HIDDEN) bottomSheetBehavior.setHideable(true);
+        if (state == BottomSheetBehavior.STATE_HIDDEN) bottomSheetBehavior.setHideable(true);
         bottomSheetBehavior.setState(state);
     }
 
@@ -172,10 +171,9 @@ public class BottomSheetsCar {
         btnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //prevBtnClick.OnClick();
-                //setState(BottomSheetBehavior.STATE_HIDDEN);
-                //activity.mapPresenter.trackSeekBar(seekBar.getProgress() - 1);
-//                Log.d(TAG, "Progress " + seekBar.getProgress());
+
+                activity.mapPresenter.prevCar();
+
 
             }
         });
@@ -186,41 +184,10 @@ public class BottomSheetsCar {
             public void onClick(View view) {
                 //nextBtnClick.OnClick();
                 //setState(BottomSheetBehavior.STATE_HIDDEN);
-                //activity.mapPresenter.trackSeekBar(seekBar.getProgress() + 1);
+                activity.mapPresenter.nextCar();
 
             }
         });
-
-        btnNext.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                doPressDown();
-                return false;
-            }
-        });
     }
 
-    private void doPressDown() {
-
-        isPressed = true;
-
-        new Thread() {
-            public void run() {
-
-                while (isPressed) {
-                    activity.mapPresenter.trackSeekBar(seekBar.getProgress() + 1);
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                // here we increment till user release the button
-            }
-        };
-    }
-
-    private void doPressRelease() {
-        isPressed = false;
-    }
 }

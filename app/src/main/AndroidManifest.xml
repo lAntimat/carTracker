@@ -23,20 +23,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".mapActivity.MapActivity"></activity>
-        <activity android:name=".TrackerEmulatorActivity"></activity>
+        <activity android:name=".mapActivity.MapActivity" />
+        <activity android:name=".TrackerEmulatorActivity" />
 
-        <service
-            android:name=".MyLocationService">
-        </service>
-
+        <service android:name=".MyLocationService"></service>
         <service
             android:name=".ExerciseJobService"
             android:enabled="true"
             android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE">
-        </service>
-        <receiver android:name=".utils.ActionReceiver"></receiver>
+            android:permission="android.permission.BIND_JOB_SERVICE"></service>
+
+        <receiver android:name=".utils.ActionReceiver" />
+
+        <activity
+            android:name=".reportActivity.ReportActivity"
+            android:label="@string/title_activity_report"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

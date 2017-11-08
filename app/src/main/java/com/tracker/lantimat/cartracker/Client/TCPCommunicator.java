@@ -1,20 +1,14 @@
 package com.tracker.lantimat.cartracker.Client;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
+import java.io.InputStream;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-
-import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -22,25 +16,18 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.tracker.lantimat.cartracker.quantor.pack.head;
-import com.tracker.lantimat.cartracker.quantor.pack.login;
-import com.tracker.lantimat.cartracker.quantor.protocolGS;
-
-import io.grpc.internal.IoUtils;
 
 public class TCPCommunicator {
 	private static TCPCommunicator uniqInstance;
 	private static String serverHost;
 	private static int serverPort;
 	private static List<TCPListener> allListeners;
-	private static BufferedWriter out;
-	private static BufferedReader in;
+	private static BufferedOutputStream out;
+	private static BufferedInputStream in;
 	private static Socket s;
 	private static Handler UIHandler;
 	private static Context appContext;
 
-	private static head H;
-	private static login L;
 
 	private static byte[] buffer = new byte[1000];    //If you handle larger data use a bigger buffer size
 
@@ -57,7 +44,7 @@ public class TCPCommunicator {
 		}
 		return uniqInstance;
 	}
-	public  TCPWriterErrors init(String host,int port)
+	public  TCPWriterErrors init(String host, int port)
 	{
 		setServerHost(host);
 		setServerPort(port);
@@ -65,21 +52,9 @@ public class TCPCommunicator {
 		task.execute(new Void[0]);
 		return TCPWriterErrors.OK;
 	}
-	public static  TCPWriterErrors writeToSocket(final String str ,Handler handle,Context context)
-	{
+	public static  TCPWriterErrors writeToSocket(final List<byte[]> ar , Handler handle, Context context) {
 		UIHandler=handle;
 		appContext=context;
-
-		String Time = "";
-		int read;
-		String _request = "";
-		H = new head();
-		L = new login();
-		H.tag = 0;
-		L.login = "test";
-		L.pwd = "test";
-		L.imei = "1234567891234567".getBytes();
-		L.ver = new byte[]{7,7,8};
 
 		Runnable runnable = new Runnable() {
 			
@@ -90,9 +65,17 @@ public class TCPCommunicator {
 				{
 			        //String outMsg = obj.toString() + System.getProperty("line.separator");
 			        //out.write(str);
-					buffer = protocolGS.packetLogin(H, L);
-			        out.flush(); 
-			        Log.i("TcpClient", "sent: " + str);
+					//buffer = ProtocolGS.packetLogin(H, L);
+					//buffer = bytes;
+					for (byte[] b: ar
+						 ) {
+						out.write(b);
+						Log.d("dump", bytesToHex(b, 0, b.length));
+					}
+			        out.flush();
+			        //Log.i("TcpClient", "sent: " + out.toString());
+
+
 				}
 				catch(Exception e)
 				{
@@ -114,8 +97,7 @@ public class TCPCommunicator {
 		
 	}
 	
-	public static void addListener(TCPListener listener)
-	{
+	public static void addListener(TCPListener listener) {
 		allListeners.clear();
 		allListeners.add(listener);
 	}
@@ -123,8 +105,7 @@ public class TCPCommunicator {
 	{
 		allListeners.clear();
 	}
-	public static void closeStreams()
-	{
+	public static void closeStreams() {
 		try
 		{
 			s.close();
@@ -135,6 +116,18 @@ public class TCPCommunicator {
 		{
 			e.printStackTrace();
 		}
+	}
+
+	private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+	public static String bytesToHex( byte[] bytes, int offset, int length) {
+		char[] hexChars = new char[length * 2];
+		for ( int j = offset; j < length; j++ ) {
+			int v = bytes[j] & 0xFF;
+			hexChars[j * 2] = hexArray[v >>> 4];
+			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+		}
+		return new String(hexChars);
+
 	}
 	
 
@@ -152,6 +145,22 @@ public class TCPCommunicator {
 	}
 
 
+	public byte[] toByteArray(InputStream inputStream) throws IOException {
+
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		int nRead;
+		byte[] data = new byte[1024];
+		while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+			buffer.write(data, 0, nRead);
+		}
+
+		buffer.flush();
+		//byte[] byteArray = buffer.toByteArray();
+		//Log.d("dump", "received " + buffer.toByteArray());
+		//Log.d("dump", "received string " + buffer.toString("UTF-8"));
+		return buffer.toByteArray();
+	}
+
 	public class InitTCPClientTask extends AsyncTask<Void, Void, Void>
 	{
 		public InitTCPClientTask()
@@ -166,24 +175,28 @@ public class TCPCommunicator {
 			try
 			{
 				s = new Socket(getServerHost(), getServerPort());
-		         in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-		         out = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
+		         in = new BufferedInputStream(new BufferedInputStream(s.getInputStream()));
+		         out = new BufferedOutputStream(new BufferedOutputStream(s.getOutputStream()));
 		         for(TCPListener listener:allListeners)
 			        	listener.onTCPConnectionStatusChanged(true);
 		        while(true)
 		        {
-		            String temp = in.readLine();
-		            if(temp!=null) {
-		                byte[] bytes = temp.getBytes();
-                        String inMsg = new String(bytes, "Windows-1251");
 
-		        	if(inMsg!=null)
+					//String inMsg = new String(toByteArray(in))
+					byte[] byteArray = toByteArray(in);
+					String inMsg = new String(byteArray, "UTF-8");
+
+		            /*if(temp!=null) {
+		                byte[] bytes = temp.getBytes();
+                        String inMsg = new String(bytes, "Windows-1251");*/
+
+		        	if(!inMsg.isEmpty())
 		        	{
-				        Log.i("TcpClient", "received: " + inMsg);
+						Log.d("dump", "received " + bytesToHex(byteArray, 0, byteArray.length));
+						Log.i("TcpClient", "received: " + inMsg);
 				        for(TCPListener listener:allListeners)
-				        	listener.onTCPMessageRecieved(inMsg);
+				        	listener.onTCPMessageReceived(inMsg);
 		        	}
-                    }
 		        }
 
 		    } catch (UnknownHostException e) {

@@ -34,6 +34,7 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
 import com.tracker.lantimat.cartracker.utils.ActionReceiver;
+import com.tracker.lantimat.cartracker.utils.FbConstants;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -187,7 +188,7 @@ public class MyLocationService extends Service {
 
     public void loadCollectionKey() {
         db.collection("cars")
-                .whereEqualTo("id", ID)
+                .whereEqualTo("id", FbConstants.ID)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -309,7 +310,7 @@ public class MyLocationService extends Service {
 
 
         //if(mLastLocation.getAccuracy()>60) {
-        Track track = new Track(ID, true, new GeoPoint(location.getLatitude(), location.getLongitude()), location.getSpeed(), new Date());
+        Track track = new Track(FbConstants.ID, true, new GeoPoint(location.getLatitude(), location.getLongitude()), location.getSpeed(), new Date());
         if (db != null & location.getAccuracy() < 100) {
             // Add a new document with a generated ID
             db.collection("tracks")

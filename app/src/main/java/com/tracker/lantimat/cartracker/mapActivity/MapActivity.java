@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,13 +24,10 @@ import android.widget.Toast;
 
 import com.tracker.lantimat.cartracker.Constants;
 import com.tracker.lantimat.cartracker.R;
-import com.tracker.lantimat.cartracker.bottomSheetsTimeline.TrackFragment;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
-
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.Polyline;
+import com.tracker.lantimat.cartracker.mapActivity.models.User;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -43,13 +41,15 @@ import java.util.List;
 public class MapActivity extends AppCompatActivity implements MapView {
 
     static final String TAG = "MapActivity";
-    static final int PAGE_COUNT = 1;
+    static final int PAGE_COUNT = 2;
 
     Toolbar toolbar;
     MapFragment mapFragment;
 
-    ViewPager pager;
-    PagerAdapter pagerAdapter;
+    ViewPager pagerTrackBs;
+    ViewPager pagerCarInfoBs;
+    PagerAdapter pagerAdapterCar;
+    PagerAdapter pagerAdapterTrack;
 
     BottomSheetBehavior bottomSheetBehavior;
     BottomSheetsTrack bottomSheetsTrack;
@@ -59,11 +59,16 @@ public class MapActivity extends AppCompatActivity implements MapView {
 
     public MapPresenter mapPresenter;
 
+    Mode mode = Mode.NORMAL;
+
     private List<MapFragmentUpdateListener> mListeners;
 
     MapFragmentUpdateListener mapFragmentUpdateListener;
+    TrackFragmentListener trackFragmentListener;
+    CarInfoFragmentListener carInfoFragmentListener;
+    CarInfoInTrackFragmentListener carInfoInTrackFragmentListener;
+    UserInfoFragmentListener userInfoFragmentListener;
 
-    Mode mode = Mode.NORMAL;
 
     public interface MapFragmentUpdateListener {
         void onDataUpdate();
@@ -77,24 +82,40 @@ public class MapActivity extends AppCompatActivity implements MapView {
         void showTrackingCarPositionMarker(Track track);
 
         void showCars(ArrayList<Cars> cars, int selectedPosition);
+
+        void onBottomSheetsStateChange(int state);
     }
-
-    TrackFragmentListener trackFragmentListener;
-
     public interface TrackFragmentListener {
         void addTracks(ArrayList<Track> tracks);
+    }
+    public interface CarInfoFragmentListener{
+        void addDate(Track track);
+    }
+    public interface CarInfoInTrackFragmentListener{
+        void addDate(Track track);
+    }
+    public interface UserInfoFragmentListener{
+        void addDate(User user);
+        void showLoading();
     }
 
     public synchronized void registerDataUpdateListener(MapFragmentUpdateListener listener) {
         //mListeners.add(listener);
         mapFragmentUpdateListener = listener;
     }
-
     public synchronized void registerTrackFragmentListener(TrackFragmentListener listener) {
         //mListeners.add(listener);
         trackFragmentListener = listener;
     }
-
+    public synchronized void registerCarInfoFragmentListener(CarInfoFragmentListener listener) {
+        carInfoFragmentListener = listener;
+    }
+    public synchronized void registerCarInfoInTrackFragmentListener(CarInfoInTrackFragmentListener listener) {
+        carInfoInTrackFragmentListener = listener;
+    }
+    public synchronized void registerUserInfoFragmentListener(UserInfoFragmentListener listener) {
+        userInfoFragmentListener = listener;
+    }
 
     public synchronized void unregisterDataUpdateListener(MapFragmentUpdateListener listener) {
         //mListeners.remove(listener);
@@ -105,6 +126,18 @@ public class MapActivity extends AppCompatActivity implements MapView {
             listener.onDataUpdate();
         }
     }
+
+    // установка обработчика выбора даты
+    DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+            dateAndTime.set(Calendar.YEAR, i);
+            dateAndTime.set(Calendar.MONTH, i1);
+            dateAndTime.set(Calendar.DAY_OF_MONTH, i2);
+            Date date = new Date(dateAndTime.getTimeInMillis());
+            mapPresenter.loadTrack(date);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,35 +172,48 @@ public class MapActivity extends AppCompatActivity implements MapView {
 
     private void initBottomSheets() {
         // get the bottom sheet view
-        LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
-
+        /*LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
         // init the bottom sheet behavior
         bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);*/
+
+
+        bottomSheetsCar.bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if(mode == Mode.CAR_SELECTED & newState == BottomSheetBehavior.STATE_HIDDEN) mapPresenter.onBackPressed(); //Если bs смахнули рукой в режиме выбранного авто
+                mapFragmentUpdateListener.onBottomSheetsStateChange(newState);
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+
+        bottomSheetsTrack.bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                mapFragmentUpdateListener.onBottomSheetsStateChange(newState);
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
 
     }
 
     private void initPagerAdapter() {
         //Инициализация ViewPager
-        pager = (ViewPager) findViewById(R.id.pager);
-        pagerAdapter = new MapActivity.MyFragmentPagerAdapter(getSupportFragmentManager());
-        pager.setAdapter(pagerAdapter);
+        pagerTrackBs = (ViewPager) findViewById(R.id.pager_track);
+        pagerCarInfoBs = (ViewPager) findViewById(R.id.pager_car);
+        pagerAdapterTrack = new TrackBsheetsPagerAdapter(getSupportFragmentManager());
+        pagerAdapterCar = new CarInfoBsheetsPagerAdapter(getSupportFragmentManager());
+        pagerTrackBs.setAdapter(pagerAdapterTrack);
+        pagerCarInfoBs.setAdapter(pagerAdapterCar);
 
-        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
     }
 
     public void showBottomSheets(View view) {
@@ -251,18 +297,6 @@ public class MapActivity extends AppCompatActivity implements MapView {
                 .show();
     }
 
-    // установка обработчика выбора даты
-    DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-            dateAndTime.set(Calendar.YEAR, i);
-            dateAndTime.set(Calendar.MONTH, i1);
-            dateAndTime.set(Calendar.DAY_OF_MONTH, i2);
-            Date date = new Date(dateAndTime.getTimeInMillis());
-            mapPresenter.loadTrack(date);
-        }
-    };
-
     @Override
     public void showTrack(Date date) {
 
@@ -311,9 +345,25 @@ public class MapActivity extends AppCompatActivity implements MapView {
     public void showCarInfo(Cars car) {
         bottomSheetsCar.setCarName(car.getName());
         bottomSheetsCar.setCarNumber(car.getCarNumber());
-
         bottomSheetsCar.setDate(car.getTrack().getTimestamp());
         bottomSheetsCar.setSpeed(String.valueOf(car.getTrack().getSpeed()));
+
+        carInfoFragmentListener.addDate(car.getTrack()); //Показываем подробную инфу во фрагменте
+    }
+
+    @Override
+    public void showCarInfoInTrack(Track track) {
+        carInfoInTrackFragmentListener.addDate(track); //Показываем подробную инфу во фрагменте
+    }
+
+    @Override
+    public void showUserInfoLoading() {
+        userInfoFragmentListener.showLoading();
+    }
+
+    @Override
+    public void showUserInfo(User user) {
+        userInfoFragmentListener.addDate(user);
     }
 
     @Override
@@ -339,9 +389,9 @@ public class MapActivity extends AppCompatActivity implements MapView {
             case NORMAL: //если это обычный режим
                 bottomSheetsTrack.setState(BottomSheetBehavior.STATE_HIDDEN);
                 bottomSheetsCar.setState(BottomSheetBehavior.STATE_HIDDEN);
-
                 break;
             case CAR_SELECTED:
+                if (bottomSheetsCar.bottomSheetBehavior.getState()==BottomSheetBehavior.STATE_HIDDEN) //Переводим в состояние Collapse, только если BS был скрыт
                 bottomSheetsCar.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 bottomSheetsTrack.setState(BottomSheetBehavior.STATE_HIDDEN);
                 break;
@@ -363,9 +413,9 @@ public class MapActivity extends AppCompatActivity implements MapView {
         else mapPresenter.onBackPressed();
     }
 
-    private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
+    private class TrackBsheetsPagerAdapter extends FragmentPagerAdapter {
 
-        public MyFragmentPagerAdapter(FragmentManager fm) {
+        public TrackBsheetsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -375,15 +425,38 @@ public class MapActivity extends AppCompatActivity implements MapView {
                 case 0:
                     return new TrackFragment();
                 case 1:
-                    return new TrackFragment();
-                //return new BottomSheetsInfoFragment();
+                    return new CarInfoInTrackFragment();
             }
             return null;
         }
 
         @Override
         public int getCount() {
-            return PAGE_COUNT;
+            return 2;
+        }
+
+    }
+    private class CarInfoBsheetsPagerAdapter extends FragmentPagerAdapter {
+
+        public CarInfoBsheetsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new CarInfoFragment();
+                case 1:
+                    return new UserInfoFragment();
+
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
         }
 
     }

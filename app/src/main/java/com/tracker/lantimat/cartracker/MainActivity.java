@@ -27,6 +27,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
+import com.tracker.lantimat.cartracker.reportActivity.ReportActivity;
 
 import java.util.Date;
 
@@ -122,6 +123,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void btnClickStartTracking(View view) {
         startService(new Intent(this, MyLocationService.class));
+    }
+
+    public void btnClick2(View view) {
+        startActivity(new Intent(this, ReportActivity.class));
     }
 
     public void clientTest(View view) {

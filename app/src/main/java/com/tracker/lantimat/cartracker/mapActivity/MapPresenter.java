@@ -15,6 +15,7 @@ import com.tracker.lantimat.cartracker.R;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
+import com.tracker.lantimat.cartracker.mapActivity.models.User;
 import com.tracker.lantimat.cartracker.utils.DayUtil;
 import com.tracker.lantimat.cartracker.utils.FbConstants;
 
@@ -41,6 +42,8 @@ public class MapPresenter {
     private ArrayList<Cars> arCars = new ArrayList<Cars>();
 
     private int carSelectedPosition = -1;
+
+    private User user;
 
     Mode mode = Mode.NORMAL;
 
@@ -85,28 +88,35 @@ public class MapPresenter {
                             clearPath();
 
                             ArrayList<Track> arMarkedTrack = new ArrayList<Track>();
+                            ArrayList<Track> arTrackTest = new ArrayList<Track>();
+
                             Double trackLength = 0D;
                             Double trackTime = 0D;
                             for (DocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 Track track = document.toObject(Track.class);
 
-                                //if()
+
+                                /*if (arTrack.size() > 0) {
+                                    //if (distanceBetween(arTrack.get(arTrack.size() - 1).getGeoPoint(), track.getGeoPoint()) < 0.03) {
+                                        //if(timeBetween(arTrack.get(arTrack.size() - 1).getTimestamp(), track.getTimestamp()) < 1500)
+                                            arTrackTest.add(track);
+                                    //}
+                                }*/
+
+
+                                arTrack.add(track); //Добавляем координаты в массив
 
                                 //Вычисляем пройденный путь за трек
                                 if (arTrack.size() > 0) {
                                     trackLength += distanceBetween(arTrack.get(arTrack.size() - 1).getGeoPoint(), track.getGeoPoint()); //Расстояние между двумя точками
                                 }
 
-                                //Добавляем координаты в массив
-                                arTrack.add(track);
-
-
                                 if (track.getSpeed() * 3.6 > 90) {
                                     mapView.addMarker(arTrack.size() - 1, track); //Добавляю трек в короткий массив, с позицией в полном массиве
-                                    arMarkedTrack.add(track);
                                 }
                             }
+
 
                             mapView.showPath(arTrack);
                             bottomSheetsTrack.setSeekBarMax(arTrack.size());
@@ -114,7 +124,6 @@ public class MapPresenter {
                             mapView.showTrackLengthInfo(String.valueOf(trackLength));
                             Log.d(TAG, "track Length " + trackLength);
                             setMode(Mode.TRACK);
-
 
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
@@ -173,7 +182,29 @@ public class MapPresenter {
                         }
 
                         mapView.showCars(arCars, carSelectedPosition); //Отображаем машины на карте
-                        if(carSelectedPosition!=-1) mapView.showCarInfo(arCars.get(carSelectedPosition)); //отображаем информацию о выделенной машине
+                        if (carSelectedPosition != -1)
+                            mapView.showCarInfo(arCars.get(carSelectedPosition)); //отображаем информацию о выделенной машине
+                    }
+                });
+    }
+
+    public void loadUserInfo(int id) {
+        mapView.showUserInfoLoading();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(FbConstants.USERS)
+                .whereEqualTo("id", id)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                user = document.toObject(User.class);
+                            }
+                            mapView.showUserInfo(user);
+                        } else {
+                            Log.e(TAG, "Error getting documents: ", task.getException());
+                        }
                     }
                 });
     }
@@ -186,6 +217,11 @@ public class MapPresenter {
         lon2 = geoPoint2.getLongitude();
         return 111.2 * Math.sqrt((lon - lon2) * (lon - lon2) + (lat - lat2) * Math.cos(Math.PI * lon / 180) * (lat - lat2) * Math.cos(Math.PI * lon / 180));
     }
+
+    public long timeBetween(Date date, Date date2) {
+        return date2.getTime() - date.getTime();
+    }
+
 
     public void makePath(ArrayList<Track> ar) {
 
@@ -203,18 +239,40 @@ public class MapPresenter {
     }
 
     public void carMarkerClick(int position) {
-        mapView.showCarInfo(arCars.get(position));
-        carSelectedPosition = position;
-        setMode(Mode.CAR_SELECTED);
-
+        showCarInfo(position);
     }
 
+    private void showCarInfo(int position) {
+        mapView.showCarInfo(arCars.get(position));
+        loadUserInfo(arCars.get(position).getDriverId());
+        carSelectedPosition = position;
+        setMode(Mode.CAR_SELECTED);
+    }
 
+    public void nextCar() {  //при нажатии кнопки выбора след машины
+        if (carSelectedPosition != -1) { //Если выбрана какая нибудь машина
+            carSelectedPosition++;
+            if (carSelectedPosition == arCars.size()) carSelectedPosition = 0; //если конец массива, обнуляем
+        }
+        mapView.showCars(arCars, carSelectedPosition);  //обновляем машины на карте, чтобы выделенная машина стала красного цвета
+        showCarInfo(carSelectedPosition); //Показываем инфу о машину
+    }
+
+    public void prevCar() {
+        if (carSelectedPosition != -1) {
+            carSelectedPosition--;
+            if (carSelectedPosition == -1) carSelectedPosition = arCars.size() - 1;
+        }
+        mapView.showCars(arCars, carSelectedPosition);
+        showCarInfo(carSelectedPosition);
+    }
 
     public void trackSeekBar(int position) {
         if (position != -1 & arTrack.size() > position) {
             mapView.setBsDateSpeed(arTrack.get(position).getTimestamp(), arTrack.get(position).getSpeed(), position);
+            mapView.showCarInfoInTrack(arTrack.get(position));
             mapView.showTrackingCarPosition(arTrack.get(position));
+            Log.d(TAG, arTrack.get(position).getGeoPoint().toString());
         }
     }
 
@@ -225,8 +283,7 @@ public class MapPresenter {
                 if (carSelectedPosition != -1) {
                     setMode(Mode.CAR_SELECTED); //если маркер с машиной кликнут, то переходим в режим просмотра машины
                     mapView.showCars(arCars, carSelectedPosition);
-                }
-                else setMode(Mode.NORMAL); //иначе в нормальный режим
+                } else setMode(Mode.NORMAL); //иначе в нормальный режим
                 break;
             case CAR_SELECTED: //Если режим клик по маркеру
                 carSelectedPosition = -1;

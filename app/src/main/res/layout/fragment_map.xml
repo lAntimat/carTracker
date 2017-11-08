@@ -23,7 +23,7 @@
         android:background="@drawable/round_button"
         android:cropToPadding="false"
         android:padding="12dp"
-        app:srcCompat="@drawable/brightness1" />
+        app:srcCompat="@drawable/ic_plus_black_24dp" />
 
     <ImageButton
         android:id="@+id/imageButton4"
@@ -50,7 +50,7 @@
         android:background="@drawable/round_button"
         android:cropToPadding="true"
         android:padding="12dp"
-        app:srcCompat="@drawable/brightness1" />
+        app:srcCompat="@drawable/ic_minus_black_24dp" />
 
     <Button
         android:id="@+id/btnShow"

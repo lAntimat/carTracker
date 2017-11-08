@@ -3,8 +3,6 @@ package com.tracker.lantimat.cartracker.quantor;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.tracker.lantimat.cartracker.quantor.pack.head;
-import com.tracker.lantimat.cartracker.quantor.pack.login;
 
 import java.io.BufferedInputStream;
 
@@ -28,13 +26,6 @@ public class NewProtocolRequest extends AsyncTask<String, String, String>  {
             byte[] buffer = new byte[1000];    //If you handle larger data use a bigger buffer size
             int read;
             String _request = "";
-            head H = new head();
-            login L = new login();
-            H.tag = 0;
-            L.login = "test";
-            L.pwd = "test";
-            L.imei = "1234567891234567".getBytes();
-            L.ver = new byte[]{7,7,8};
 
             try {
 //                InetAddress serverAddr = InetAddress.getByName(serverIpAddress);
@@ -50,7 +41,7 @@ public class NewProtocolRequest extends AsyncTask<String, String, String>  {
                     out = new BufferedOutputStream(socket.getOutputStream());
                     inBS = socket.getInputStream();
                     inputS = new BufferedInputStream(inBS);
-                    buffer = protocolGS.packetLogin(H, L);
+                    //buffer = ProtocolGS.packetLogin(H, L);
                     out.write(buffer);
                     out.flush();
                 } catch (Exception e) {

@@ -108,13 +108,13 @@ public class TrackerEmulatorActivity extends Activity implements TCPListener {
             e.printStackTrace();
         }
         //byte[] packet = createMsg("100", (short)15, (short)82, '1', "\r\n");
-        TCPCommunicator.writeToSocket(txtName.getText().toString(), UIHandler,this);
+        //TCPCommunicator.writeToSocket(txtName.getText().toString(), UIHandler,this);
         //dialog.show();
 
     }
 
     @Override
-    public void onTCPMessageRecieved(String message) {
+    public void onTCPMessageReceived(String message) {
         // TODO Auto-generated method stub
 
 

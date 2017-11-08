@@ -25,7 +25,7 @@ public class BottomSheetsTrack {
 
     public MyClickListener prevBtnClick;
     public MyClickListener nextBtnClick;
-    private BottomSheetBehavior bottomSheetBehavior;
+    public BottomSheetBehavior bottomSheetBehavior;
     private Context context;
     private MapActivity activity;
     private ImageView btnPrev, btnNext;
@@ -59,8 +59,8 @@ public class BottomSheetsTrack {
     }
 
     private void initView() {
-        tvTravelTime = (TextView) activity.findViewById(R.id.tvName);
-        tvWayLength = (TextView) activity.findViewById(R.id.tvDate);
+        tvTravelTime = (TextView) activity.findViewById(R.id.tvTitle);
+        tvWayLength = (TextView) activity.findViewById(R.id.tvSubTitle);
 
         btnNext = (ImageView) activity.findViewById(R.id.ivNext);
         btnPrev = (ImageView) activity.findViewById(R.id.ivPrev);

@@ -26,7 +26,7 @@
             android:visibility="visible">
 
             <TextView
-                android:id="@+id/tvName"
+                android:id="@+id/tvTitle"
                 style="@style/Base.DialogWindowTitle.AppCompat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -62,10 +62,10 @@
                 app:srcCompat="@drawable/ic_menu_right_black_36dp" />
 
             <TextView
-                android:id="@+id/tvSub"
+                android:id="@+id/tvSubTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvName"
+                android:layout_below="@+id/tvTitle"
                 android:layout_marginLeft="10dp"
                 android:layout_toEndOf="@+id/ivPrev"
                 android:text="X663AO116RUS" />
@@ -74,17 +74,18 @@
                 android:id="@+id/tvSpeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/tvSub"
-                android:layout_alignBottom="@+id/tvSub"
-                android:layout_alignStart="@+id/tvDate"
+                android:layout_alignBaseline="@+id/tvSubTitle"
+                android:layout_alignBottom="@+id/tvSubTitle"
+                android:layout_alignStart="@+id/tvStatus"
+                android:layout_toStartOf="@+id/ivNext"
                 android:text="50 км/ч" />
 
             <TextView
-                android:id="@+id/tvDate"
+                android:id="@+id/tvStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/tvName"
-                android:layout_alignBottom="@+id/tvName"
+                android:layout_alignBaseline="@+id/tvTitle"
+                android:layout_alignBottom="@+id/tvTitle"
                 android:layout_toStartOf="@+id/ivNext"
                 android:text="В движении" />
 
@@ -114,7 +115,7 @@
         android:padding="10dp">
 
         <android.support.v4.view.ViewPager
-            android:id="@+id/pager"
+            android:id="@+id/pager_car"
             android:layout_width="match_parent"
             android:layout_height="match_parent"></android.support.v4.view.ViewPager>
 
