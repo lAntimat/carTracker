@@ -11,20 +11,19 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.tracker.lantimat.cartracker.R;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
+import com.tracker.lantimat.cartracker.mapActivity.models.TrackInfo;
 import com.tracker.lantimat.cartracker.mapActivity.models.User;
 import com.tracker.lantimat.cartracker.utils.DayUtil;
 import com.tracker.lantimat.cartracker.utils.FbConstants;
 
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.Polyline;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by GabdrakhmanovII on 20.10.2017.
@@ -61,6 +60,12 @@ public class MapPresenter {
 
     }
 
+    private void setMode(Mode mode) {
+        this.mode = mode;
+        mapView.onModeChange(mode);
+
+    }
+
     public void loadTrack(Date date) {
         //Date date = new Date();
         //date.setTime(1508986177000L);
@@ -85,31 +90,31 @@ public class MapPresenter {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
 
-                            clearPath();
+                            if(task.getResult().size() == 0) {
+                                mapView.showError("Нет данных!");
+                                setMode(Mode.CAR_SELECTED);
+                                return;
+                            }
 
+                            clearPath();
                             ArrayList<Track> arMarkedTrack = new ArrayList<Track>();
                             ArrayList<Track> arTrackTest = new ArrayList<Track>();
 
                             Double trackLength = 0D;
-                            Double trackTime = 0D;
+                            long trackTime = 0;
+                            Double averageSpeed = 0D;
                             for (DocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 Track track = document.toObject(Track.class);
-
-
-                                /*if (arTrack.size() > 0) {
-                                    //if (distanceBetween(arTrack.get(arTrack.size() - 1).getGeoPoint(), track.getGeoPoint()) < 0.03) {
-                                        //if(timeBetween(arTrack.get(arTrack.size() - 1).getTimestamp(), track.getTimestamp()) < 1500)
-                                            arTrackTest.add(track);
-                                    //}
-                                }*/
-
 
                                 arTrack.add(track); //Добавляем координаты в массив
 
                                 //Вычисляем пройденный путь за трек
                                 if (arTrack.size() > 0) {
                                     trackLength += distanceBetween(arTrack.get(arTrack.size() - 1).getGeoPoint(), track.getGeoPoint()); //Расстояние между двумя точками
+                                    averageSpeed += track.getSpeed();
+                                    Log.d(TAG, "trackLength " + trackLength);
+
                                 }
 
                                 if (track.getSpeed() * 3.6 > 90) {
@@ -117,6 +122,13 @@ public class MapPresenter {
                                 }
                             }
 
+
+                            averageSpeed = averageSpeed/arTrack.size();
+
+                            trackTime = arTrack.get(arTrack.size() - 1).getTimestamp().getTime() - arTrack.get(0).getTimestamp().getTime();
+
+                            TrackInfo trackInfo = new TrackInfo(trackLength, averageSpeed, trackTime);
+                            mapView.showTrackInfo(trackInfo);
 
                             mapView.showPath(arTrack);
                             bottomSheetsTrack.setSeekBarMax(arTrack.size());
@@ -130,12 +142,6 @@ public class MapPresenter {
                         }
                     }
                 });
-    }
-
-    private void setMode(Mode mode) {
-        this.mode = mode;
-        mapView.onModeChange(mode);
-
     }
 
     public void loadCars() {
@@ -242,11 +248,31 @@ public class MapPresenter {
         showCarInfo(position);
     }
 
-    private void showCarInfo(int position) {
+    public void setCar(int position) { //выбираем машину, и она становитсья другого цвета + карта центрируется на ней
+        showCarInfo(position);
+        mapView.showCars(arCars, carSelectedPosition); //Обновляем машины, чтобы цвет сменился
+        //Центрируем карту
+        mapView.setCenter(new GeoPoint(arCars.get(carSelectedPosition).getTrack().getGeoPoint().getLatitude(),
+                arCars.get(carSelectedPosition).getTrack().getGeoPoint().getLongitude()));
+
+    }
+
+
+    private void showCarInfo(int position) { //выбираем машину, и она становитсья другого цвета, но карта не центрируется на ней
         mapView.showCarInfo(arCars.get(position));
         loadUserInfo(arCars.get(position).getDriverId());
         carSelectedPosition = position;
         setMode(Mode.CAR_SELECTED);
+    }
+
+    public void showCarsList() {
+        ArrayList<Cars> cars = new ArrayList<>();
+        cars.addAll(arCars);
+        mapView.showCarsListFragment(cars, carSelectedPosition);
+    }
+
+    public void hideCarsList() {
+        mapView.hideCarsListFragment();
     }
 
     public void nextCar() {  //при нажатии кнопки выбора след машины
@@ -254,8 +280,9 @@ public class MapPresenter {
             carSelectedPosition++;
             if (carSelectedPosition == arCars.size()) carSelectedPosition = 0; //если конец массива, обнуляем
         }
-        mapView.showCars(arCars, carSelectedPosition);  //обновляем машины на карте, чтобы выделенная машина стала красного цвета
-        showCarInfo(carSelectedPosition); //Показываем инфу о машину
+
+        setCar(carSelectedPosition);
+
     }
 
     public void prevCar() {
@@ -263,14 +290,14 @@ public class MapPresenter {
             carSelectedPosition--;
             if (carSelectedPosition == -1) carSelectedPosition = arCars.size() - 1;
         }
-        mapView.showCars(arCars, carSelectedPosition);
-        showCarInfo(carSelectedPosition);
+        setCar(carSelectedPosition);
     }
 
     public void trackSeekBar(int position) {
         if (position != -1 & arTrack.size() > position) {
             mapView.setBsDateSpeed(arTrack.get(position).getTimestamp(), arTrack.get(position).getSpeed(), position);
             mapView.showCarInfoInTrack(arTrack.get(position));
+
             mapView.showTrackingCarPosition(arTrack.get(position));
             Log.d(TAG, arTrack.get(position).getGeoPoint().toString());
         }

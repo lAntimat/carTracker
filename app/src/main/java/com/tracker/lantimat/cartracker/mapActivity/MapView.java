@@ -3,6 +3,7 @@ package com.tracker.lantimat.cartracker.mapActivity;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
+import com.tracker.lantimat.cartracker.mapActivity.models.TrackInfo;
 import com.tracker.lantimat.cartracker.mapActivity.models.User;
 
 import org.osmdroid.util.GeoPoint;
@@ -42,10 +43,18 @@ public interface MapView {
 
     void showUserInfo(User user);
 
+    void showTrackInfo(TrackInfo trackInfo);
+
     void showCars(ArrayList<Cars> ar, int selectedPosition);
 
-    void showTrackInfo();
+    void setCenter(GeoPoint geoPoint);
+
+    void showCarsListFragment(ArrayList<Cars> ar, int selectedPosition);
+
+    void hideCarsListFragment();
 
     void onModeChange(Mode mode);
+
+    void showError(String error);
 
 }

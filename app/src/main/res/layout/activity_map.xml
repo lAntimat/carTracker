@@ -7,6 +7,7 @@
     tools:context=".mapActivity.MapActivity">
 
     <!-- подключение основного контента -->
+
     <include layout="@layout/activity_map_content" />
 
     <!-- подключение нижнего экрана -->
@@ -14,5 +15,14 @@
 
     <!-- подключение нижнего экрана -->
     <include layout="@layout/bottom_sheet_car" />
+
+    <FrameLayout
+        android:id="@+id/map_activity_content_with_toolbar_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true">
+
+    </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

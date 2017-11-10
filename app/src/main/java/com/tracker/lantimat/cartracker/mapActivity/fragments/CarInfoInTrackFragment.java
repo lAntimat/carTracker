@@ -1,4 +1,4 @@
-package com.tracker.lantimat.cartracker.mapActivity;
+package com.tracker.lantimat.cartracker.mapActivity.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.tracker.lantimat.cartracker.R;
+import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
 import com.tracker.lantimat.cartracker.mapActivity.bottomSheetsTimeline.TimeLineAdapter;
 import com.tracker.lantimat.cartracker.mapActivity.bottomSheetsTimeline.model.Orientation;
 import com.tracker.lantimat.cartracker.mapActivity.bottomSheetsTimeline.model.TimeLineModel;
@@ -28,7 +29,9 @@ import java.util.List;
  * Created by GabdrakhmanovII on 28.07.2017.
  */
 
-public class CarInfoFragment extends Fragment implements MapActivity.CarInfoFragmentListener {
+/**Фрагмент выводиться в BottomSheets и показывает подробную информацию по каждой точке трека*/
+
+public class CarInfoInTrackFragment extends Fragment implements MapActivity.CarInfoInTrackFragmentListener {
 
     final static String TAG = "CarInfoFragment";
 
@@ -40,7 +43,7 @@ public class CarInfoFragment extends Fragment implements MapActivity.CarInfoFrag
     private Orientation mOrientation = Orientation.VERTICAL;
     private boolean mWithLinePadding = false;
 
-    public CarInfoFragment() {
+    public CarInfoInTrackFragment() {
     }
 
     //public static TrackFragment newInstance() {
@@ -90,7 +93,7 @@ public class CarInfoFragment extends Fragment implements MapActivity.CarInfoFrag
 
     @Override
     public void onAttach(Context context) {
-        ((MapActivity) context).registerCarInfoFragmentListener(this);
+        ((MapActivity) context).registerCarInfoInTrackFragmentListener(this);
         super.onAttach(context);
     }
 

@@ -1,4 +1,4 @@
-package com.tracker.lantimat.cartracker.utils;
+package com.tracker.lantimat.cartracker.mapActivity.adapters;
 
 import android.content.Context;
 import android.widget.Toast;

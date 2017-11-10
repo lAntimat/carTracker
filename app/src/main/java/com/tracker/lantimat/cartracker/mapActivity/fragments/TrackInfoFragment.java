@@ -1,4 +1,4 @@
-package com.tracker.lantimat.cartracker.mapActivity;
+package com.tracker.lantimat.cartracker.mapActivity.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tracker.lantimat.cartracker.R;
+import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
+import com.tracker.lantimat.cartracker.mapActivity.models.TrackInfo;
 import com.tracker.lantimat.cartracker.mapActivity.models.User;
 
 import org.osmdroid.config.Configuration;
@@ -23,9 +25,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by GabdrakhmanovII on 28.07.2017.
  */
 
-public class UserInfoFragment extends Fragment implements MapActivity.UserInfoFragmentListener {
+/**В этом фрагменте информацию о треке
+ * длина трека, средняя скорость, время в пути
+ */
+public class TrackInfoFragment extends Fragment implements MapActivity.TrackInfoFragmentListener {
 
-    final static String TAG = "CarInfoFragment";
+    final static String TAG = "TrackInfoFragment";
 
     TextView tvName, tvSubname, tvOther;
     CircleImageView profileImage;
@@ -33,7 +38,7 @@ public class UserInfoFragment extends Fragment implements MapActivity.UserInfoFr
     View content;
     ProgressBar progressBar;
 
-    public UserInfoFragment() {
+    public TrackInfoFragment() {
     }
 
     //public static TrackFragment newInstance() {
@@ -52,7 +57,7 @@ public class UserInfoFragment extends Fragment implements MapActivity.UserInfoFr
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.fragment_user_info, null);
+        View v = inflater.inflate(R.layout.fragment_track_info, null);
         tvName = (TextView) v.findViewById(R.id.tvTitle);
         tvSubname = (TextView) v.findViewById(R.id.tvSubTitle);
         tvOther = (TextView) v.findViewById(R.id.tvOther);
@@ -76,7 +81,7 @@ public class UserInfoFragment extends Fragment implements MapActivity.UserInfoFr
 
     @Override
     public void onAttach(Context context) {
-        ((MapActivity) context).registerUserInfoFragmentListener(this);
+        ((MapActivity) context).registerTrackInfoFragmentListener(this);
         super.onAttach(context);
     }
 
@@ -91,17 +96,15 @@ public class UserInfoFragment extends Fragment implements MapActivity.UserInfoFr
     }
 
     @Override
-    public void addDate(User user) {
-        Log.d(TAG, "addDate");
-
+    public void addDate(TrackInfo trackInfo) {
         content.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.INVISIBLE);
 
-        Picasso.with(getContext()).load(user.getImgUrl()).into(profileImage);
+        //Picasso.with(getContext()).load(user.getImgUrl()).into(profileImage);
 
-        tvName.setText(user.getName());
-        tvSubname.setText(user.getSubName());
-        tvOther.setText("Номер вод. уд. " + user.getDriverLicenseId() + "\nНомер телефона: " + "+79600000000");
+        tvName.setText("Время в пути " + trackInfo.getTime());
+        tvSubname.setText("Средняя скорость " + trackInfo.getAverageSpeed());
+        tvOther.setText("Пройдено расстояние " + trackInfo.getTrackLength());
     }
 
     @Override

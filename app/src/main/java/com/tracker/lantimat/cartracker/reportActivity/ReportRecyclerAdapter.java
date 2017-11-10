@@ -1,13 +1,17 @@
 package com.tracker.lantimat.cartracker.reportActivity;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.tracker.lantimat.cartracker.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -17,9 +21,11 @@ import java.util.ArrayList;
 public class ReportRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<Report> mList;
+    private Context context;
 
 
-    public ReportRecyclerAdapter(ArrayList<Report> itemList) {
+    public ReportRecyclerAdapter(Context context, ArrayList<Report> itemList) {
+        this.context = context;
         this.mList = itemList;
     }
     @Override
@@ -34,7 +40,10 @@ public class ReportRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
         ((SecondViewHolder) holder).tvTitle.setText(mList.get(position).getTitle());
-        ((SecondViewHolder) holder).tvMsg.setText(mList.get(position).getMsg());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY/MM/dd HH:mm");
+        ((SecondViewHolder) holder).tvMsg.setText(mList.get(position).getMsg() + "\n" + simpleDateFormat.format(mList.get(position).getTimestamp()));
+
+        Picasso.with(context).load(mList.get(position).getImg()).into(((SecondViewHolder) holder).imageView);
 
     }
     @Override
@@ -63,11 +72,13 @@ public class ReportRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public static class SecondViewHolder extends RecyclerView.ViewHolder {
         public TextView tvTitle;
         public TextView tvMsg;
+        private ImageView imageView;
 
         public SecondViewHolder(View itemView) {
             super(itemView);
             tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
             tvMsg = (TextView) itemView.findViewById(R.id.tvMsg);
+            imageView = (ImageView) itemView.findViewById(R.id.imageView);
         }
     }
 }

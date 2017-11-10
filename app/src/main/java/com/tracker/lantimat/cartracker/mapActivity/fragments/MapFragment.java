@@ -1,4 +1,4 @@
-package com.tracker.lantimat.cartracker.mapActivity;
+package com.tracker.lantimat.cartracker.mapActivity.fragments;
 
 import android.Manifest;
 import android.content.Context;
@@ -29,12 +29,12 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.tracker.lantimat.cartracker.R;
+import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
-import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
-import com.tracker.lantimat.cartracker.utils.CarItemizedOverlay;
+import com.tracker.lantimat.cartracker.mapActivity.adapters.CarItemizedOverlay;
 import com.tracker.lantimat.cartracker.utils.KindleGeoPointHelper;
-import com.tracker.lantimat.cartracker.utils.MyOwnItemizedOverlay;
+import com.tracker.lantimat.cartracker.mapActivity.adapters.MyOwnItemizedOverlay;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.config.Configuration;
@@ -64,7 +64,7 @@ import static android.content.Context.LOCATION_SERVICE;
  * Created by GabdrakhmanovII on 28.07.2017.
  */
 
-public class MapFragment extends Fragment implements LocationListener, MapActivity.MapFragmentUpdateListener{
+public class MapFragment extends Fragment implements LocationListener, MapActivity.MapFragmentUpdateListener {
 
 
     final static String TAG = "MapFragment";
@@ -306,15 +306,19 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
 
     }
 
-    public void moveCameraToGeopointLocation(GeoPoint g) {
+    public void moveCameraToGeopointLocation(GeoPoint g, boolean animation) {
         //перемещаем камеру
 
         //mMapView.getController().setZoom(14);
         //mMapView.getController().animateTo(g);
         if(state == BottomSheetBehavior.STATE_EXPANDED) {
             final GeoPoint adjustedCenter = adjustCentreByPadding(g.getLatitude(), g.getLongitude(), false);
-            mMapView.getController().setCenter(adjustedCenter);
-        } else mMapView.getController().setCenter(g);
+            if(animation) mMapView.getController().animateTo(adjustedCenter);
+            else mMapView.getController().setCenter(adjustedCenter);
+        } else {
+            if(animation) mMapView.getController().animateTo(g);
+            else mMapView.getController().setCenter(g);
+        }
 
 
     }
@@ -620,7 +624,7 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
         olItem.setMarker(getResources().getDrawable(R.drawable.car));
         showTrackCarOverlay.addItem(olItem);
         GeoPoint g = new GeoPoint(track.getGeoPoint().getLatitude(), track.getGeoPoint().getLongitude());
-        moveCameraToGeopointLocation(g);
+        moveCameraToGeopointLocation(g, false);
         mMapView.invalidate();
 
         Log.d(TAG, "showTrackingCarPositionMarker");
@@ -647,5 +651,10 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
             }
 
         }
+    }
+
+    @Override
+    public void setCenter(GeoPoint geoPoint) {
+        moveCameraToGeopointLocation(geoPoint, true);
     }
 }

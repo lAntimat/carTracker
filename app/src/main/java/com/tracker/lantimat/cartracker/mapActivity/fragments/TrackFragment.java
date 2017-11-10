@@ -1,4 +1,4 @@
-package com.tracker.lantimat.cartracker.mapActivity;
+package com.tracker.lantimat.cartracker.mapActivity.fragments;
 
 import android.content.Context;
 import android.icu.text.SimpleDateFormat;
@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.tracker.lantimat.cartracker.R;
+import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
 import com.tracker.lantimat.cartracker.mapActivity.bottomSheetsTimeline.TimeLineAdapter;
 import com.tracker.lantimat.cartracker.mapActivity.bottomSheetsTimeline.model.OrderStatus;
 import com.tracker.lantimat.cartracker.mapActivity.bottomSheetsTimeline.model.Orientation;
@@ -145,9 +146,9 @@ public class TrackFragment extends Fragment implements MapActivity.TrackFragment
                     if( i < 1) i++;
                     else if (tracks.size() > 0) {
                         distance += distanceBetween(tracks.get(i - 1).getGeoPoint(), tracks.get(i).getGeoPoint()); //Расстояние между двумя точками
-                        Log.d(TAG, "distance " + distance);
+                        //Log.d(TAG, "distance " + distance);
                         driveTime += timeBetween(tracks.get(i - 1).getTimestamp(), tracks.get(i).getTimestamp());
-                        Log.d(TAG, "driveTime " + driveTime);
+                        //Log.d(TAG, "driveTime " + driveTime);
                         i++;
                         if (i == tracks.size()) return;
                     }

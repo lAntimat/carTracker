@@ -1,12 +1,15 @@
 package com.tracker.lantimat.cartracker.mapActivity.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.firestore.GeoPoint;
 
 /**
  * Created by GabdrakhmanovII on 27.10.2017.
  */
 
-public class Cars {
+public class Cars implements Parcelable {
 
     private int id;
     private int driverId;
@@ -24,6 +27,14 @@ public class Cars {
         this.name = name;
         this.carNumber = carNumber;
         this.ptsNumber = ptsNumber;
+    }
+
+    protected Cars(Parcel in) {
+        id = in.readInt();
+        driverId = in.readInt();
+        name = in.readString();
+        carNumber = in.readString();
+        ptsNumber = in.readString();
     }
 
     public int getId() {
@@ -72,5 +83,32 @@ public class Cars {
 
     public void setTrack(Track track) {
         this.track = track;
+    }
+
+    public static final Creator<Cars> CREATOR = new Creator<Cars>() {
+        @Override
+        public Cars createFromParcel(Parcel in) {
+            return new Cars(in);
+        }
+
+        @Override
+        public Cars[] newArray(int size) {
+            return new Cars[size];
+        }
+    };
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeInt(driverId);
+        parcel.writeString(name);
+        parcel.writeString(carNumber);
+        parcel.writeString(ptsNumber);
     }
 }

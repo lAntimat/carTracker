@@ -56,11 +56,11 @@
         android:id="@+id/btnShow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="showBottomSheets"
-        android:text="Инфо о трекер"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:onClick="showFragment"
+        android:text="Инфо о трекер" />
 
     <Button
         android:id="@+id/button"
