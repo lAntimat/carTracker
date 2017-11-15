@@ -11,5 +11,5 @@ public class FbConstants {
     public static final String TRACKS = "tracks";
     public static final String CARS = "cars";
     public static final String USERS = "users";
-    public static final String REPORTS = "reports1";
+    public static final String REPORTS = "reports";
 }

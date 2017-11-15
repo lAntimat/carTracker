@@ -17,4 +17,8 @@ public interface ReportView extends LoadingView {
     void showAddReportFragment();
 
     void hideAddReportFragment();
+
+    void onUploadImageSuccess(int position);
+
+    void onUploadImageProgress(int position, int progress);
 }

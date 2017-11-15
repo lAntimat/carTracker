@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Date;
 public class Report {
     String title;
     String msg;
-    String img;
+    ArrayList<String> arUrl = new ArrayList<>();
     @ServerTimestamp
     Date timestamp;
 
@@ -43,12 +44,13 @@ public class Report {
         this.msg = msg;
     }
 
-    public String getImg() {
-        return img;
+    public String getImg(int position) {
+        if(arUrl.size()==0) return null;
+        return arUrl.get(position);
     }
 
-    public void setImg(String img) {
-        this.img = img;
+    public void setImg(ArrayList<String> ar) {
+        this.arUrl.addAll(ar);
     }
 
     public Date getTimestamp() {

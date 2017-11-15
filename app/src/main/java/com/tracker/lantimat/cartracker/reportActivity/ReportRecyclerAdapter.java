@@ -1,6 +1,7 @@
 package com.tracker.lantimat.cartracker.reportActivity;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +12,10 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.tracker.lantimat.cartracker.R;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by GabdrakhmanovII on 03.11.2017.
@@ -43,9 +46,11 @@ public class ReportRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY/MM/dd HH:mm");
         ((SecondViewHolder) holder).tvMsg.setText(mList.get(position).getMsg() + "\n" + simpleDateFormat.format(mList.get(position).getTimestamp()));
 
-        Picasso.with(context).load(mList.get(position).getImg()).into(((SecondViewHolder) holder).imageView);
+        if(mList.get(position).getImg(0)!=null)
+        Picasso.with(context).load(mList.get(position).getImg(0)).fit().centerCrop().into(((SecondViewHolder) holder).imageView);
 
     }
+
     @Override
     public int getItemCount() {
         if (mList == null)

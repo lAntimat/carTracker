@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.tracker.lantimat.cartracker.R;
+import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
 import com.tracker.lantimat.cartracker.utils.AnimationUtils;
 import com.tracker.lantimat.cartracker.utils.RevealAnimationSetting;
 
@@ -33,6 +34,20 @@ public class ReportActivity extends AppCompatActivity implements ReportView {
     ReportRecyclerAdapter reportRecyclerAdapter;
     ArrayList<Report> ar = new ArrayList<>();
 
+    AddReportFragmentListener addReportFragmentListener;
+
+
+    public interface AddReportFragmentListener {
+        void onProgressUpdate(int position, int progress);
+        void onSuccess(int position);
+    }
+
+    public synchronized void registerDataUpdateListener(AddReportFragmentListener listener) {
+        //mListeners.add(listener);
+        addReportFragmentListener = listener;
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +64,7 @@ public class ReportActivity extends AppCompatActivity implements ReportView {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               showAddReportFragment();
+               presenter.showFragment();
             }
         });
 
@@ -77,6 +92,16 @@ public class ReportActivity extends AppCompatActivity implements ReportView {
     }
 
     @Override
+    public void onUploadImageSuccess(int position) {
+        if(addReportFragmentListener!=null) addReportFragmentListener.onSuccess(position);
+    }
+
+    @Override
+    public void onUploadImageProgress(int position, int progress) {
+        if(addReportFragmentListener!=null) addReportFragmentListener.onProgressUpdate(position, progress);
+    }
+
+    @Override
     public void showReports(ArrayList<Report> reports) {
         ar.clear();
         ar.addAll(reports);
@@ -95,7 +120,7 @@ public class ReportActivity extends AppCompatActivity implements ReportView {
 
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                //.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                 .add(R.id.container, addReportFragment)
                 .addToBackStack("report")
                 .commit();

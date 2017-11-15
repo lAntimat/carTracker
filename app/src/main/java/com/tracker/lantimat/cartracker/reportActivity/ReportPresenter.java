@@ -18,6 +18,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.tracker.lantimat.cartracker.Client.TCPCommunicator;
@@ -52,6 +53,8 @@ public class ReportPresenter implements TCPListener {
     private boolean isFirstLoad=true;
     String theMessage = "";
     Report mReport;
+
+    ArrayList<String> arReportUrl = new ArrayList<>();
 
     private ArrayList<Report> arReports = new ArrayList<>();
     FirebaseFirestore db;
@@ -109,6 +112,8 @@ public class ReportPresenter implements TCPListener {
 
     public void sendData(Report report) {
 
+        report.setImg(arReportUrl);
+
         if (db != null) {
             // Add a new document with a generated ID
             db.collection(FbConstants.REPORTS)
@@ -131,8 +136,7 @@ public class ReportPresenter implements TCPListener {
         }
     }
 
-    public void uploadReport(Report report, byte[] data) {
-        this.mReport = report;
+    public void uploadReport(byte[] data) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("DDMMYYHHMMSS");
 
         StorageReference spaceRef = storageRef.child(simpleDateFormat.format(new Date()) + ".jpg");
@@ -143,19 +147,28 @@ public class ReportPresenter implements TCPListener {
             public void onFailure(@NonNull Exception exception) {
                 // Handle unsuccessful uploads
             }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                //uploadCallBack.onProgress(arReportUrl.size(), (int) progress);
+                view.onUploadImageProgress(arReportUrl.size(), (int) progress);
+                Log.d(TAG, "progress " + progress);
+            }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                mReport.setImg(downloadUrl.toString());
-                sendData(mReport);
-
+                //uploadCallBack.onSuccess(arReportUrl.size());
+                view.onUploadImageSuccess(arReportUrl.size());
+                arReportUrl.add(downloadUrl.toString());
             }
         });
     }
 
     public void showFragment() {
+        arReportUrl.clear();
         view.showAddReportFragment();
     }
 
