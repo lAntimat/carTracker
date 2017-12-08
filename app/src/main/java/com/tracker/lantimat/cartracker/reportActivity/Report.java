@@ -1,6 +1,8 @@
 package com.tracker.lantimat.cartracker.reportActivity;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.firebase.firestore.ServerTimestamp;
 
@@ -12,7 +14,7 @@ import java.util.Date;
  * Created by GabdrakhmanovII on 03.11.2017.
  */
 
-public class Report {
+public class Report implements Parcelable {
     String title;
     String msg;
     ArrayList<String> arUrl = new ArrayList<>();
@@ -26,6 +28,12 @@ public class Report {
         this.title = title;
         this.msg = msg;
         this.timestamp = timestamp;
+    }
+
+    protected Report(Parcel in) {
+        title = in.readString();
+        msg = in.readString();
+        arUrl = in.createStringArrayList();
     }
 
     public String getTitle() {
@@ -49,6 +57,10 @@ public class Report {
         return arUrl.get(position);
     }
 
+    public ArrayList<String> getArImg() {
+        return arUrl;
+    }
+
     public void setImg(ArrayList<String> ar) {
         this.arUrl.addAll(ar);
     }
@@ -60,4 +72,28 @@ public class Report {
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(title);
+        parcel.writeString(msg);
+        parcel.writeStringList(arUrl);
+    }
+
+    public static final Creator<Report> CREATOR = new Creator<Report>() {
+        @Override
+        public Report createFromParcel(Parcel in) {
+            return new Report(in);
+        }
+
+        @Override
+        public Report[] newArray(int size) {
+            return new Report[size];
+        }
+    };
 }

@@ -41,7 +41,7 @@ public class NewProtocolRequest extends AsyncTask<String, String, String>  {
                     out = new BufferedOutputStream(socket.getOutputStream());
                     inBS = socket.getInputStream();
                     inputS = new BufferedInputStream(inBS);
-                    //buffer = ProtocolGS.packetLogin(H, L);
+                    //buffer = protocolGS.packetLogin(H, L);
                     out.write(buffer);
                     out.flush();
                 } catch (Exception e) {

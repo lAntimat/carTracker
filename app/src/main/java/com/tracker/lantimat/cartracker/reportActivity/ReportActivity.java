@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.tracker.lantimat.cartracker.R;
 import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
 import com.tracker.lantimat.cartracker.utils.AnimationUtils;
+import com.tracker.lantimat.cartracker.utils.ItemClickSupport;
 import com.tracker.lantimat.cartracker.utils.RevealAnimationSetting;
 
 import java.util.ArrayList;
@@ -81,6 +82,13 @@ public class ReportActivity extends AppCompatActivity implements ReportView {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(reportRecyclerAdapter);
+
+        ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                presenter.showShowReportFragment(position);
+            }
+        });
     }
 
     @Override
@@ -89,6 +97,18 @@ public class ReportActivity extends AppCompatActivity implements ReportView {
         if (manager.getBackStackEntryCount() != 0) {
             manager.popBackStack();
         }
+    }
+
+    @Override
+    public void showShowReportFragment(Report report) {
+        ShowReportFragment showReportFragment = ShowReportFragment.newInstance(report);
+
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                //.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .add(R.id.container, showReportFragment)
+                .addToBackStack("showReport")
+                .commit();
     }
 
     @Override

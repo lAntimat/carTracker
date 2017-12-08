@@ -65,7 +65,7 @@ public class TCPCommunicator {
 				{
 			        //String outMsg = obj.toString() + System.getProperty("line.separator");
 			        //out.write(str);
-					//buffer = ProtocolGS.packetLogin(H, L);
+					//buffer = protocolGS.packetLogin(H, L);
 					//buffer = bytes;
 					for (byte[] b: ar
 						 ) {
@@ -74,6 +74,7 @@ public class TCPCommunicator {
 					}
 			        out.flush();
 			        //Log.i("TcpClient", "sent: " + out.toString());
+
 
 
 				}
@@ -195,7 +196,7 @@ public class TCPCommunicator {
 						Log.d("dump", "received " + bytesToHex(byteArray, 0, byteArray.length));
 						Log.i("TcpClient", "received: " + inMsg);
 				        for(TCPListener listener:allListeners)
-				        	listener.onTCPMessageReceived(inMsg);
+				        	listener.onTCPMessageReceived(bytesToHex(byteArray, 0, byteArray.length));
 		        	}
 		        }
 

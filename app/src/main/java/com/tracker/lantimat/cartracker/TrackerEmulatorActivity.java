@@ -1,31 +1,33 @@
 package com.tracker.lantimat.cartracker;
 
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tracker.lantimat.cartracker.Client.EnumsAndStatics;
 import com.tracker.lantimat.cartracker.Client.SettingsActivity;
 import com.tracker.lantimat.cartracker.Client.TCPCommunicator;
 import com.tracker.lantimat.cartracker.Client.TCPListener;
+import com.tracker.lantimat.cartracker.quantor.protocolGS;
+import com.tracker.lantimat.cartracker.quantor.pack.error;
+import com.tracker.lantimat.cartracker.quantor.pack.sendreqreport;
 
-import java.io.UnsupportedEncodingException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TrackerEmulatorActivity extends Activity implements TCPListener {
 
@@ -91,27 +93,46 @@ public class TrackerEmulatorActivity extends Activity implements TCPListener {
     }
     public void btnSendClick(View view)
     {
-        JSONObject obj = new JSONObject();
-        EditText txtName= (EditText)findViewById(R.id.txtUserName);
-        if(txtName.getText().toString().length()==0)
-        {
-            Toast.makeText(this, "Please enter text", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        try
-        {
-            //obj.put(EnumsAndStatics.MESSAGE_TYPE_FOR_JSON, EnumsAndStatics.MessageTypes.MessageFromClient);
-            //obj.put(EnumsAndStatics.MESSAGE_CONTENT_FOR_JSON, txtName.getText().toString());
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        //byte[] packet = createMsg("100", (short)15, (short)82, '1', "\r\n");
-        //TCPCommunicator.writeToSocket(txtName.getText().toString(), UIHandler,this);
-        //dialog.show();
+        sendDate();
 
     }
+
+    public void sendDate() {
+
+
+        try {
+
+            sendreqreport report = new sendreqreport(); //Пакет с отчетом
+            report.title = "Title";
+            report.msg = "Msg";
+            report.imei = "1111222233334444".getBytes();
+
+            error[] error = new error[0];
+
+            Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                    R.drawable.car_red);
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            icon.compress(Bitmap.CompressFormat.PNG, 10, stream);
+            byte[] photoArray = stream.toByteArray();
+
+            byte[] photo = {0,1,2,2,2,15,6,5,45,4,54,5,45,4,54,5,45,4,54,54,5,4};
+
+            List<byte[]> list = new ArrayList<>();
+/*        list.add(header.toBytes());
+        list.add(report.toBytes());
+        list.add(count.toBytes());
+        list.add(error.toBytes());*/
+
+            list.add(protocolGS.packetSRR(report, (short)0, error,  photoArray, 50));
+
+            TCPCommunicator.writeToSocket(list, UIHandler, getApplicationContext());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void onTCPMessageReceived(String message) {

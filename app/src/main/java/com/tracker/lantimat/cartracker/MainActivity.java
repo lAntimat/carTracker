@@ -24,6 +24,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.tracker.lantimat.cartracker.Kotlin.MainKotlinActivity;
 import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
@@ -132,4 +133,9 @@ public class MainActivity extends AppCompatActivity {
     public void clientTest(View view) {
         startActivity(new Intent(this, TrackerEmulatorActivity.class));
     }
+
+    public void openKotlinActivity(View view) {
+        startActivity(new Intent(this, MainKotlinActivity.class));
+    }
+
 }

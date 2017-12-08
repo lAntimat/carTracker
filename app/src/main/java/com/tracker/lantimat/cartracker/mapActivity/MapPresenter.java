@@ -11,6 +11,9 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.tracker.lantimat.cartracker.mapActivity.API.ApiUtils;
+import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
+import com.tracker.lantimat.cartracker.mapActivity.API.SOService;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
@@ -24,6 +27,11 @@ import org.osmdroid.util.GeoPoint;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 /**
  * Created by GabdrakhmanovII on 20.10.2017.
@@ -46,18 +54,16 @@ public class MapPresenter {
 
     Mode mode = Mode.NORMAL;
 
+    SOService mService;
 
     public MapPresenter(MapView mapView, BottomSheetsTrack bottomSheetsTrack) {
         this.mapView = mapView;
         this.bottomSheetsTrack = bottomSheetsTrack;
+        mService = ApiUtils.getSOService();
     }
 
     public MapView getView() {
         return mapView;
-    }
-
-    public void init() {
-
     }
 
     private void setMode(Mode mode) {
@@ -147,29 +153,6 @@ public class MapPresenter {
     public void loadCars() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-/*        db.collection(FbConstants.CARS)
-                .orderBy("id")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-
-                            arCars.clear();
-                            for (DocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                Cars cars = document.toObject(Cars.class);
-                                arCars.add(cars);
-                            }
-
-                            mapView.showCars(arCars, carSelectedPosition);
-
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });*/
-
         db.collection(FbConstants.CARS)
                 .orderBy("id")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -192,6 +175,26 @@ public class MapPresenter {
                             mapView.showCarInfo(arCars.get(carSelectedPosition)); //отображаем информацию о выделенной машине
                     }
                 });
+    }
+
+    public void getObjects() {
+        mService.getObjects().enqueue(new Callback<CarsR>() {
+            @Override
+            public void onResponse(Call<CarsR> call, Response<CarsR> response) {
+                if(response.isSuccessful()) {
+                    response.body();
+                    Log.d("MainActivity", "posts loaded from API");
+                }else {
+                    int statusCode  = response.code();
+                    // handle request errors depending on status code
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CarsR> call, Throwable t) {
+
+            }
+        });
     }
 
     public void loadUserInfo(int id) {

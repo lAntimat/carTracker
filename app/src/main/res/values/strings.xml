@@ -12,4 +12,5 @@
     <string name="pop_up_menu_set_on_map">"Указать на карте"</string>
     <string name="pop_up_menu_search">"Найти..."</string>
     <string name="title_activity_report">ReportActivity</string>
+    <string name="title_activity_main_kotlin">MainKotlinActivity</string>
 </resources>
