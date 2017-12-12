@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.tracker.lantimat.cartracker.R;
+import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
 import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
 import com.tracker.lantimat.cartracker.mapActivity.bottomSheetsTimeline.TimeLineAdapter;
 import com.tracker.lantimat.cartracker.mapActivity.bottomSheetsTimeline.model.Orientation;
@@ -119,9 +120,10 @@ public class CarInfoFragment extends Fragment implements MapActivity.CarInfoFrag
         super.onResume();
     }
 
+
     @Override
-    public void addDate(Track track) {
+    public void addDate(CarsR car) {
         Log.d(TAG, "addDate");
-        textView.setText("Скорость " + track.getSpeed() + "\nУровень масла " + track.getCarId() + "\nДвигатель работает " + track.isEngineOn() + "\n" + track.getGeoPoint().toString());
+        textView.setText("Скорость " + car.getState().getSpeed() + "\nнапряжение батареи" + car.getState().getBatVoltage() + "\nДвигатель работает " + car.getState().getEgts() + "\n" + car.getState().getAngle());
     }
 }

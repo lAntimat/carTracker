@@ -29,6 +29,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.tracker.lantimat.cartracker.R;
+import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
 import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
@@ -279,14 +280,14 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
     }
 
 
-    private void addCars(ArrayList<Cars> cars, int selectedPosition) {
+    private void addCars(ArrayList<CarsR> cars, int selectedPosition) {
 
 
         //overlayCarsNowPositionArray.clear();
         if(carNowPositionOverlay!=null) carNowPositionOverlay.removeAllItems();
         //items
         for (int i = 0; i < cars.size(); i++) {
-            OverlayItem item = new OverlayItem("Test", "Test", new GeoPoint(cars.get(i).getTrack().getGeoPoint().getLatitude(), cars.get(i).getTrack().getGeoPoint().getLongitude()));
+            OverlayItem item = new OverlayItem("Test", "Test", new GeoPoint(cars.get(i).getState().getLat(), cars.get(i).getState().getLon()));
             if (i == selectedPosition)
                 item.setMarker(getResources().getDrawable(R.drawable.car_red));
             else item.setMarker(getResources().getDrawable(R.drawable.car));
@@ -631,7 +632,7 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
     }
 
     @Override
-    public void showCars(ArrayList<Cars> cars, int selectedPosition) {
+    public void showCars(ArrayList<CarsR> cars, int selectedPosition) {
         addCars(cars, selectedPosition);
     }
 

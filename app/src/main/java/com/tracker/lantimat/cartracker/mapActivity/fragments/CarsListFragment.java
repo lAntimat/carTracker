@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.tracker.lantimat.cartracker.R;
+import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
 import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
 import com.tracker.lantimat.cartracker.mapActivity.adapters.CarsListRecyclerAdapter;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
@@ -31,7 +32,7 @@ public class CarsListFragment extends Fragment {
 
     View content;
     ProgressBar progressBar;
-    ArrayList<Cars> ar = new ArrayList<>();
+    ArrayList<CarsR> ar = new ArrayList<>();
 
     RecyclerView recyclerView;
     CarsListRecyclerAdapter carsRecyclerAdapter;
@@ -41,7 +42,7 @@ public class CarsListFragment extends Fragment {
 
     ImageView btnClose;
 
-    public static CarsListFragment newInstance(ArrayList<Cars> ar) {
+    public static CarsListFragment newInstance(ArrayList<CarsR> ar) {
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList("ar", ar);
 

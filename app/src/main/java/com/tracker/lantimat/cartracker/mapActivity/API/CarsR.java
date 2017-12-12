@@ -1,12 +1,15 @@
 package com.tracker.lantimat.cartracker.mapActivity.API;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Awesome Pojo Generator
  */
-public class CarsR {
+public class CarsR implements Parcelable{
     @SerializedName("models")
     @Expose
     private Models models;
@@ -73,4 +76,43 @@ public class CarsR {
     public String getType() {
         return type;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.models, flags);
+        dest.writeString(this.name);
+        dest.writeString(this._id);
+        dest.writeString(this.id);
+        dest.writeParcelable(this.state, flags);
+        dest.writeString(this.type);
+    }
+
+    public CarsR() {
+    }
+
+    protected CarsR(Parcel in) {
+        this.models = in.readParcelable(Models.class.getClassLoader());
+        this.name = in.readString();
+        this._id = in.readString();
+        this.id = in.readString();
+        this.state = in.readParcelable(State.class.getClassLoader());
+        this.type = in.readString();
+    }
+
+    public static final Creator<CarsR> CREATOR = new Creator<CarsR>() {
+        @Override
+        public CarsR createFromParcel(Parcel source) {
+            return new CarsR(source);
+        }
+
+        @Override
+        public CarsR[] newArray(int size) {
+            return new CarsR[size];
+        }
+    };
 }

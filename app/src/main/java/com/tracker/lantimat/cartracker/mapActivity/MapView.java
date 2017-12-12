@@ -1,5 +1,6 @@
 package com.tracker.lantimat.cartracker.mapActivity;
 
+import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
@@ -35,7 +36,7 @@ public interface MapView {
 
     void showTrackingCarPosition(Track track);
 
-    void showCarInfo(Cars car);
+    void showCarInfo(CarsR car);
 
     void showCarInfoInTrack(Track track);
 
@@ -45,11 +46,11 @@ public interface MapView {
 
     void showTrackInfo(TrackInfo trackInfo);
 
-    void showCars(ArrayList<Cars> ar, int selectedPosition);
+    void showCars(ArrayList<CarsR> ar, int selectedPosition);
 
     void setCenter(GeoPoint geoPoint);
 
-    void showCarsListFragment(ArrayList<Cars> ar, int selectedPosition);
+    void showCarsListFragment(ArrayList<CarsR> ar, int selectedPosition);
 
     void hideCarsListFragment();
 

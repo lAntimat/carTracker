@@ -1,8 +1,10 @@
 package com.tracker.lantimat.cartracker.mapActivity;
 
 import android.app.DatePickerDialog;
+import android.app.backup.SharedPreferencesBackupHelper;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -22,8 +24,12 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.tracker.lantimat.cartracker.Constants;
 import com.tracker.lantimat.cartracker.R;
+import com.tracker.lantimat.cartracker.mapActivity.API.ApiUtils;
+import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
+import com.tracker.lantimat.cartracker.mapActivity.API.SOService;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.CarInfoFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.CarInfoInTrackFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.CarsListFragment;
@@ -36,6 +42,8 @@ import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
 import com.tracker.lantimat.cartracker.mapActivity.models.TrackInfo;
 import com.tracker.lantimat.cartracker.mapActivity.models.User;
+import com.tracker.lantimat.cartracker.quantor.pack.response;
+import com.tracker.lantimat.cartracker.utils.SharedPreferenceHelper;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -46,6 +54,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class MapActivity extends AppCompatActivity implements MapView {
@@ -93,7 +105,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
 
         void showTrackingCarPositionMarker(Track track);
 
-        void showCars(ArrayList<Cars> cars, int selectedPosition);
+        void showCars(ArrayList<CarsR> cars, int selectedPosition);
 
         void onBottomSheetsStateChange(int state);
 
@@ -103,7 +115,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
         void addTracks(ArrayList<Track> tracks);
     }
     public interface CarInfoFragmentListener{
-        void addDate(Track track);
+        void addDate(CarsR car);
     }
     public interface CarInfoInTrackFragmentListener{
         void addDate(Track track);
@@ -173,8 +185,26 @@ public class MapActivity extends AppCompatActivity implements MapView {
         bottomSheetsCar = new BottomSheetsCar(this);
 
         mapPresenter = new MapPresenter(this, bottomSheetsTrack);
-        mapPresenter.loadCars();
+        //mapPresenter.loadCars();
 
+
+
+        SOService mService;
+        mService = ApiUtils.getSOService();
+        Call<Gson> call = mService.login("kamaz-api", "Aa79372996433");
+        call.enqueue(new Callback<Gson>() {
+            @Override
+            public void onResponse(Call<Gson> call, Response<Gson> response) {
+                Log.d(TAG, "AuthSuccess " + response.toString());
+                SharedPreferenceHelper.setSharedPreferenceString(getApplicationContext(), Constants.AUTH_COOKIE, response.headers().get("set-cookie"));
+                mapPresenter.getObjects();
+            }
+
+            @Override
+            public void onFailure(Call<Gson> call, Throwable t) {
+
+            }
+        });
         initBottomSheets();
         initPagerAdapter();
         initFragment();
@@ -385,13 +415,13 @@ public class MapActivity extends AppCompatActivity implements MapView {
     }
 
     @Override
-    public void showCarInfo(Cars car) {
+    public void showCarInfo(CarsR car) {
         bottomSheetsCar.setCarName(car.getName());
-        bottomSheetsCar.setCarNumber(car.getCarNumber());
-        bottomSheetsCar.setDate(car.getTrack().getTimestamp());
-        bottomSheetsCar.setSpeed(String.valueOf(car.getTrack().getSpeed()));
+        bottomSheetsCar.setCarNumber(car.getType());
+        bottomSheetsCar.setDate(new Date(car.getState().getTime()));
+        bottomSheetsCar.setSpeed(String.valueOf(car.getState().getSpeed()));
 
-        carInfoFragmentListener.addDate(car.getTrack()); //Показываем подробную инфу во фрагменте
+        carInfoFragmentListener.addDate(car); //Показываем подробную инфу во фрагменте
     }
 
     @Override
@@ -416,7 +446,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
     }
 
     @Override
-    public void showCars(ArrayList<Cars> ar, int selectedPosition) {
+    public void showCars(ArrayList<CarsR> ar, int selectedPosition) {
         mapFragmentUpdateListener.showCars(ar, selectedPosition);
     }
 
@@ -426,7 +456,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
     }
 
     @Override
-    public void showCarsListFragment(ArrayList<Cars> ar, int selectedPosition) {
+    public void showCarsListFragment(ArrayList<CarsR> ar, int selectedPosition) {
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList("1" ,ar);/**/
 

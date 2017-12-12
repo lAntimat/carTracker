@@ -47,6 +47,7 @@ public class MapPresenter {
 
     private ArrayList<Track> arTrack = new ArrayList<Track>();
     private ArrayList<Cars> arCars = new ArrayList<Cars>();
+    private ArrayList<CarsR> arCarsR = new ArrayList<>();
 
     private int carSelectedPosition = -1;
 
@@ -170,20 +171,23 @@ public class MapPresenter {
                             arCars.add(cars);
                         }
 
-                        mapView.showCars(arCars, carSelectedPosition); //Отображаем машины на карте
-                        if (carSelectedPosition != -1)
-                            mapView.showCarInfo(arCars.get(carSelectedPosition)); //отображаем информацию о выделенной машине
+                        //mapView.showCars(arCars, carSelectedPosition); //Отображаем машины на карте
+                        //if (carSelectedPosition != -1)
+                           // mapView.showCarInfo(arCars.get(carSelectedPosition)); //отображаем информацию о выделенной машине
                     }
                 });
     }
 
     public void getObjects() {
-        mService.getObjects().enqueue(new Callback<CarsR>() {
+        mService.getObjects().enqueue(new Callback<ArrayList<CarsR>>() {
             @Override
-            public void onResponse(Call<CarsR> call, Response<CarsR> response) {
+            public void onResponse(Call<ArrayList<CarsR>> call, Response<ArrayList<CarsR>> response) {
                 if(response.isSuccessful()) {
-                    response.body();
-                    Log.d("MainActivity", "posts loaded from API");
+                    arCarsR = response.body();
+                    mapView.showCars(arCarsR, carSelectedPosition); //Отображаем машины на карте
+                    if (carSelectedPosition != -1)
+                        mapView.showCarInfo(arCarsR.get(carSelectedPosition)); //отображаем информацию о выделенной машине
+                    Log.d(TAG, "posts loaded from API");
                 }else {
                     int statusCode  = response.code();
                     // handle request errors depending on status code
@@ -191,8 +195,8 @@ public class MapPresenter {
             }
 
             @Override
-            public void onFailure(Call<CarsR> call, Throwable t) {
-
+            public void onFailure(Call<ArrayList<CarsR>> call, Throwable t) {
+                Log.d(TAG, "onFailure");
             }
         });
     }
@@ -253,7 +257,7 @@ public class MapPresenter {
 
     public void setCar(int position) { //выбираем машину, и она становитсья другого цвета + карта центрируется на ней
         showCarInfo(position);
-        mapView.showCars(arCars, carSelectedPosition); //Обновляем машины, чтобы цвет сменился
+        mapView.showCars(arCarsR, carSelectedPosition); //Обновляем машины, чтобы цвет сменился
         //Центрируем карту
         mapView.setCenter(new GeoPoint(arCars.get(carSelectedPosition).getTrack().getGeoPoint().getLatitude(),
                 arCars.get(carSelectedPosition).getTrack().getGeoPoint().getLongitude()));
@@ -262,7 +266,7 @@ public class MapPresenter {
 
 
     private void showCarInfo(int position) { //выбираем машину, и она становитсья другого цвета, но карта не центрируется на ней
-        mapView.showCarInfo(arCars.get(position));
+        mapView.showCarInfo(arCarsR.get(position));
         loadUserInfo(arCars.get(position).getDriverId());
         carSelectedPosition = position;
         setMode(Mode.CAR_SELECTED);
@@ -271,7 +275,7 @@ public class MapPresenter {
     public void showCarsList() {
         ArrayList<Cars> cars = new ArrayList<>();
         cars.addAll(arCars);
-        mapView.showCarsListFragment(cars, carSelectedPosition);
+        mapView.showCarsListFragment(arCarsR, carSelectedPosition);
     }
 
     public void hideCarsList() {
@@ -312,12 +316,12 @@ public class MapPresenter {
                 clearPath(); //чистим карту от трека
                 if (carSelectedPosition != -1) {
                     setMode(Mode.CAR_SELECTED); //если маркер с машиной кликнут, то переходим в режим просмотра машины
-                    mapView.showCars(arCars, carSelectedPosition);
+                    mapView.showCars(arCarsR, carSelectedPosition);
                 } else setMode(Mode.NORMAL); //иначе в нормальный режим
                 break;
             case CAR_SELECTED: //Если режим клик по маркеру
                 carSelectedPosition = -1;
-                mapView.showCars(arCars, carSelectedPosition);
+                mapView.showCars(arCarsR, carSelectedPosition);
                 setMode(Mode.NORMAL);
                 break;
         }
