@@ -98,7 +98,7 @@ public class UserInfoFragment extends Fragment implements MapActivity.UserInfoFr
         content.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.INVISIBLE);
 
-        Picasso.with(getContext()).load(user.getImgUrl()).into(profileImage);
+//        Picasso.with(getContext()).load(user.getImgUrl()).into(profileImage);
 
         tvName.setText(user.getName());
         tvSubname.setText(user.getSubName());

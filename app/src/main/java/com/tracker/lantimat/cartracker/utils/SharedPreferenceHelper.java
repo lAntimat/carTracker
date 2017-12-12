@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by GabdrakhmanovII on 12.12.2017.
@@ -49,7 +50,7 @@ public class SharedPreferenceHelper {
         editor.apply();
     }
 
-    public static void setSharedPreferenceputStringSet(Context context, String key, HashSet<String> value){
+    public static void setSharedPreferenceStringSet(Context context, String key, Set<String> value){
         SharedPreferences settings = context.getSharedPreferences(PREF_FILE, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putStringSet(key, value);
@@ -90,9 +91,9 @@ public class SharedPreferenceHelper {
         return settings.getBoolean(key, defValue);
     }
 
-    public static HashSet<String> getSharedPreferenceStringSet(Context context, String key, HashSet<String> defValue){
+    public static Set<String> getSharedPreferenceStringSet(Context context, String key){
         SharedPreferences settings = context.getSharedPreferences(PREF_FILE, 0);
-        return (HashSet<String>) settings.getStringSet(key, defValue);
+        return settings.getStringSet(key, null);
     }
 
 

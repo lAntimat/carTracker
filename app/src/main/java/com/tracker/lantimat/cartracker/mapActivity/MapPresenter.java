@@ -196,7 +196,7 @@ public class MapPresenter {
 
             @Override
             public void onFailure(Call<ArrayList<CarsR>> call, Throwable t) {
-                Log.d(TAG, "onFailure");
+                Log.d(TAG, "onFailure" + t.getMessage());
             }
         });
     }
@@ -267,7 +267,8 @@ public class MapPresenter {
 
     private void showCarInfo(int position) { //выбираем машину, и она становитсья другого цвета, но карта не центрируется на ней
         mapView.showCarInfo(arCarsR.get(position));
-        loadUserInfo(arCars.get(position).getDriverId());
+        //loadUserInfo(arCarsR.get(position).getDriverId());
+        mapView.showUserInfo(new User(0,0, "", arCarsR.get(position).getName(), arCarsR.get(position).getStatus(), ""));
         carSelectedPosition = position;
         setMode(Mode.CAR_SELECTED);
     }

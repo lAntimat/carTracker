@@ -196,12 +196,12 @@ public class MapActivity extends AppCompatActivity implements MapView {
             @Override
             public void onResponse(Call<Gson> call, Response<Gson> response) {
                 Log.d(TAG, "AuthSuccess " + response.toString());
-                SharedPreferenceHelper.setSharedPreferenceString(getApplicationContext(), Constants.AUTH_COOKIE, response.headers().get("set-cookie"));
                 mapPresenter.getObjects();
             }
 
             @Override
             public void onFailure(Call<Gson> call, Throwable t) {
+                Log.d(TAG, "AuthFail ");
 
             }
         });
@@ -418,7 +418,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
     public void showCarInfo(CarsR car) {
         bottomSheetsCar.setCarName(car.getName());
         bottomSheetsCar.setCarNumber(car.getType());
-        bottomSheetsCar.setDate(new Date(car.getState().getTime()));
+        bottomSheetsCar.setDate(new Date((long) car.getState().getTime()));
         bottomSheetsCar.setSpeed(String.valueOf(car.getState().getSpeed()));
 
         carInfoFragmentListener.addDate(car); //Показываем подробную инфу во фрагменте
@@ -458,7 +458,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
     @Override
     public void showCarsListFragment(ArrayList<CarsR> ar, int selectedPosition) {
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("1" ,ar);/**/
+        bundle.putParcelableArrayList("1" , ar);/**/
 
         CarsListFragment carsListFragment = CarsListFragment.newInstance(ar);
 

@@ -124,6 +124,6 @@ public class CarInfoFragment extends Fragment implements MapActivity.CarInfoFrag
     @Override
     public void addDate(CarsR car) {
         Log.d(TAG, "addDate");
-        textView.setText("Скорость " + car.getState().getSpeed() + "\nнапряжение батареи" + car.getState().getBatVoltage() + "\nДвигатель работает " + car.getState().getEgts() + "\n" + car.getState().getAngle());
+        textView.setText("Скорость " + car.getState().getSpeed() + "\nнапряжение батареи" + car.getState().getBat_voltage() + "\nДвигатель работает " + car.getState().getEgts() + "\n" + car.getState().getAngle());
     }
 }
