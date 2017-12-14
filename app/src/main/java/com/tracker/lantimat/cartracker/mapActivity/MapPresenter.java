@@ -26,8 +26,14 @@ import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -179,7 +185,7 @@ public class MapPresenter {
     }
 
     public void getObjects() {
-        mService.getObjects().enqueue(new Callback<ArrayList<CarsR>>() {
+        /*mService.getObjects().enqueue(new Callback<ArrayList<CarsR>>() {
             @Override
             public void onResponse(Call<ArrayList<CarsR>> call, Response<ArrayList<CarsR>> response) {
                 if(response.isSuccessful()) {
@@ -198,7 +204,26 @@ public class MapPresenter {
             public void onFailure(Call<ArrayList<CarsR>> call, Throwable t) {
                 Log.d(TAG, "onFailure" + t.getMessage());
             }
-        });
+        });*/
+    }
+
+    public void startGetObjectSchedule() {
+        //ArrayList<CarsR> carsR = new ArrayList<>();
+        Scheduler scheduler = Schedulers.from(Executors.newSingleThreadExecutor());
+        Observable.interval(5, TimeUnit.SECONDS)
+                .flatMap(n ->
+                        mService.getObjects()
+                                .retry(3)
+                                .subscribeOn(scheduler))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(carsRS -> {
+                    Log.d(TAG, "RxJava work ohuet`");
+                    arCarsR.clear();
+                    arCarsR.addAll(carsRS);
+                    mapView.showCars(arCarsR, carSelectedPosition); //Отображаем машины на карте
+                    if (carSelectedPosition != -1)
+                        mapView.showCarInfo(arCarsR.get(carSelectedPosition)); //отображаем информацию о выделенной машине
+                });
     }
 
     public void loadUserInfo(int id) {
@@ -259,17 +284,19 @@ public class MapPresenter {
         showCarInfo(position);
         mapView.showCars(arCarsR, carSelectedPosition); //Обновляем машины, чтобы цвет сменился
         //Центрируем карту
-        mapView.setCenter(new GeoPoint(arCars.get(carSelectedPosition).getTrack().getGeoPoint().getLatitude(),
-                arCars.get(carSelectedPosition).getTrack().getGeoPoint().getLongitude()));
+        mapView.setCenter(new GeoPoint(arCarsR.get(carSelectedPosition).getState().getLat(),
+                arCarsR.get(carSelectedPosition).getState().getLon()));
 
     }
 
 
     private void showCarInfo(int position) { //выбираем машину, и она становитсья другого цвета, но карта не центрируется на ней
-        mapView.showCarInfo(arCarsR.get(position));
-        //loadUserInfo(arCarsR.get(position).getDriverId());
-        mapView.showUserInfo(new User(0,0, "", arCarsR.get(position).getName(), arCarsR.get(position).getStatus(), ""));
         carSelectedPosition = position;
+        if(carSelectedPosition == -1) carSelectedPosition = arCarsR.size();
+        if(carSelectedPosition == arCarsR.size()) carSelectedPosition = 0;
+        mapView.showCarInfo(arCarsR.get(carSelectedPosition));
+        //loadUserInfo(arCarsR.get(position).getDriverId());
+        mapView.showUserInfo(new User(0,0, "", arCarsR.get(carSelectedPosition).getName(), arCarsR.get(carSelectedPosition).getStatus(), ""));
         setMode(Mode.CAR_SELECTED);
     }
 

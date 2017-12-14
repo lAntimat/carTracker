@@ -230,7 +230,7 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
         mMapView.getOverlays().add(this.mScaleBarOverlay);
 
         mLocationOverlay.enableMyLocation();
-        mLocationOverlay.enableFollowLocation();
+        //mLocationOverlay.enableFollowLocation();
         mLocationOverlay.setOptionsMenuEnabled(true);
         //mCompassOverlay.enableCompass();
 

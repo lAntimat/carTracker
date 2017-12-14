@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -21,5 +22,5 @@ public interface SOService {
     Call<Gson> login(@Field("login") String login, @Field("password") String pass);
 
     @GET("objects")
-    Call<ArrayList<CarsR>> getObjects();
+    Observable<ArrayList<CarsR>> getObjects();
 }

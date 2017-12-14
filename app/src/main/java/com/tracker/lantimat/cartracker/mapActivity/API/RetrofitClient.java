@@ -2,6 +2,7 @@ package com.tracker.lantimat.cartracker.mapActivity.API;
 
 import android.content.Context;
 
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.loopj.android.http.PersistentCookieStore;
 
 import java.io.IOException;
@@ -43,6 +44,7 @@ public class RetrofitClient {
                     .baseUrl(baseUrl)
                     .client(okHttpClient.build())
                     .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build();
         }
         return retrofit;

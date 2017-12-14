@@ -196,7 +196,8 @@ public class MapActivity extends AppCompatActivity implements MapView {
             @Override
             public void onResponse(Call<Gson> call, Response<Gson> response) {
                 Log.d(TAG, "AuthSuccess " + response.toString());
-                mapPresenter.getObjects();
+                //mapPresenter.getObjects();
+                mapPresenter.startGetObjectSchedule();
             }
 
             @Override
