@@ -22,11 +22,11 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".mapActivity.MapActivity" />
+        <activity android:name=".mapActivity.MapActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
         <activity android:name=".TrackerEmulatorActivity" />
 
         <service android:name=".MyLocationService" />
@@ -34,7 +34,7 @@
             android:name=".ExerciseJobService"
             android:enabled="true"
             android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE"></service>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver android:name=".utils.ActionReceiver" />
 
@@ -42,7 +42,7 @@
             android:name=".reportActivity.ReportActivity"
             android:label="@string/title_activity_report"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan" />
 
         <provider
             android:name=".utils.GenericFileProvider"

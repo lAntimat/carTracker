@@ -14,6 +14,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.tracker.lantimat.cartracker.mapActivity.API.ApiUtils;
 import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
 import com.tracker.lantimat.cartracker.mapActivity.API.SOService;
+import com.tracker.lantimat.cartracker.mapActivity.API.State;
+import com.tracker.lantimat.cartracker.mapActivity.models.CarState;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
@@ -32,11 +34,8 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Action;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 /**
@@ -47,7 +46,10 @@ public class MapPresenter {
 
     final static String TAG = "MapPresenter";
 
-    private final MapView mapView;
+    private Disposable disposable;
+
+
+    private MapView mapView;
     private Context context;
     private BottomSheetsTrack bottomSheetsTrack;
 
@@ -63,14 +65,25 @@ public class MapPresenter {
 
     SOService mService;
 
-    public MapPresenter(MapView mapView, BottomSheetsTrack bottomSheetsTrack) {
-        this.mapView = mapView;
-        this.bottomSheetsTrack = bottomSheetsTrack;
+    public MapPresenter() {
         mService = ApiUtils.getSOService();
     }
 
-    public MapView getView() {
-        return mapView;
+    public void attachView(MapView mapView, BottomSheetsTrack bottomSheetsTrack) {
+        this.bottomSheetsTrack = bottomSheetsTrack;
+        this.mapView = mapView;
+    }
+
+    public void detachView() {
+        stopDateUpdate();
+        this.mapView = null;
+    }
+
+    void stopDateUpdate() {
+        if (disposable != null && !disposable.isDisposed()) {
+            System.out.println("stopped");
+            disposable.dispose();
+        }
     }
 
     private void setMode(Mode mode) {
@@ -210,20 +223,31 @@ public class MapPresenter {
     public void startGetObjectSchedule() {
         //ArrayList<CarsR> carsR = new ArrayList<>();
         Scheduler scheduler = Schedulers.from(Executors.newSingleThreadExecutor());
-        Observable.interval(5, TimeUnit.SECONDS)
+        disposable = Observable.interval(5, TimeUnit.SECONDS)
                 .flatMap(n ->
                         mService.getObjects()
                                 .retry(3)
                                 .subscribeOn(scheduler))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(carsRS -> {
-                    Log.d(TAG, "RxJava work ohuet`");
+                    //Log.d(TAG, "RxJava work ohuet`");
                     arCarsR.clear();
                     arCarsR.addAll(carsRS);
-                    mapView.showCars(arCarsR, carSelectedPosition); //Отображаем машины на карте
-                    if (carSelectedPosition != -1)
-                        mapView.showCarInfo(arCarsR.get(carSelectedPosition)); //отображаем информацию о выделенной машине
+                    if(mapView!= null) {
+                        mapView.showCars(arCarsR, carSelectedPosition); //Отображаем машины на карте
+                        if (carSelectedPosition != -1)
+                            mapView.showCarInfo(arCarsR.get(carSelectedPosition), stateFromApiToCarState(arCarsR.get(carSelectedPosition).getState())); //отображаем информацию о выделенной машине
+                    }
                 });
+    }
+
+    public ArrayList<CarState> stateFromApiToCarState(State state) {
+        ArrayList<CarState> ar = new ArrayList<>();
+        ar.add(new CarState("Угол", String.valueOf(state.getAngle())));
+        ar.add(new CarState("Скорость", String.valueOf(state.getSpeed())));
+        ar.add(new CarState("Напряжение батареи", String.valueOf(state.getBat_voltage())));
+        ar.add(new CarState("Уровень топлива", String.valueOf(state.getFuel())));
+        return ar;
     }
 
     public void loadUserInfo(int id) {
@@ -294,7 +318,7 @@ public class MapPresenter {
         carSelectedPosition = position;
         if(carSelectedPosition == -1) carSelectedPosition = arCarsR.size();
         if(carSelectedPosition == arCarsR.size()) carSelectedPosition = 0;
-        mapView.showCarInfo(arCarsR.get(carSelectedPosition));
+        mapView.showCarInfo(arCarsR.get(carSelectedPosition), stateFromApiToCarState(arCarsR.get(carSelectedPosition).getState()));
         //loadUserInfo(arCarsR.get(position).getDriverId());
         mapView.showUserInfo(new User(0,0, "", arCarsR.get(carSelectedPosition).getName(), arCarsR.get(carSelectedPosition).getStatus(), ""));
         setMode(Mode.CAR_SELECTED);

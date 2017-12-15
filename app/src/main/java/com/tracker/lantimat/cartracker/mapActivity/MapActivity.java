@@ -5,6 +5,7 @@ import android.app.backup.SharedPreferencesBackupHelper;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -37,6 +38,7 @@ import com.tracker.lantimat.cartracker.mapActivity.fragments.MapFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.TrackFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.TrackInfoFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.UserInfoFragment;
+import com.tracker.lantimat.cartracker.mapActivity.models.CarState;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
@@ -115,7 +117,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
         void addTracks(ArrayList<Track> tracks);
     }
     public interface CarInfoFragmentListener{
-        void addDate(CarsR car);
+        void addDate(ArrayList<CarState> ar);
     }
     public interface CarInfoInTrackFragmentListener{
         void addDate(Track track);
@@ -184,8 +186,8 @@ public class MapActivity extends AppCompatActivity implements MapView {
         bottomSheetsTrack = new BottomSheetsTrack(this);
         bottomSheetsCar = new BottomSheetsCar(this);
 
-        mapPresenter = new MapPresenter(this, bottomSheetsTrack);
-        //mapPresenter.loadCars();
+        mapPresenter = new MapPresenter();
+        attachPresenter();
 
 
 
@@ -213,6 +215,26 @@ public class MapActivity extends AppCompatActivity implements MapView {
 
     public void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void attachPresenter() {
+        mapPresenter = (MapPresenter) getLastCustomNonConfigurationInstance();
+        if (mapPresenter == null) {
+            mapPresenter = new MapPresenter();
+        }
+        mapPresenter.attachView(this, bottomSheetsTrack);
     }
 
     private void initFragment() {
@@ -371,6 +393,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
     }
 
 
+
     @Override
     public void showTrack(Date date) {
 
@@ -416,13 +439,13 @@ public class MapActivity extends AppCompatActivity implements MapView {
     }
 
     @Override
-    public void showCarInfo(CarsR car) {
+    public void showCarInfo(CarsR car, ArrayList<CarState> carState) {
         bottomSheetsCar.setCarName(car.getName());
         bottomSheetsCar.setCarNumber(car.getType());
         bottomSheetsCar.setDate(new Date((long) car.getState().getTime()));
         bottomSheetsCar.setSpeed(String.valueOf(car.getState().getSpeed()));
 
-        carInfoFragmentListener.addDate(car); //Показываем подробную инфу во фрагменте
+        carInfoFragmentListener.addDate(carState); //Показываем подробную инфу во фрагменте
     }
 
     @Override
@@ -525,6 +548,17 @@ public class MapActivity extends AppCompatActivity implements MapView {
         else mapPresenter.onBackPressed();
     }
 
+    @Override
+    protected void onDestroy() {
+        mapPresenter.detachView();
+        super.onDestroy();
+
+    }
+
+    @Override
+    public Object onRetainCustomNonConfigurationInstance() {
+        return mapPresenter;
+    }
 
 
     private class TrackBsheetsPagerAdapter extends FragmentPagerAdapter {
@@ -552,6 +586,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
         }
 
     }
+
     private class CarInfoBsheetsPagerAdapter extends FragmentPagerAdapter {
 
         public CarInfoBsheetsPagerAdapter(FragmentManager fm) {

@@ -1,6 +1,7 @@
 package com.tracker.lantimat.cartracker.mapActivity;
 
 import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
+import com.tracker.lantimat.cartracker.mapActivity.models.CarState;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
@@ -36,7 +37,7 @@ public interface MapView {
 
     void showTrackingCarPosition(Track track);
 
-    void showCarInfo(CarsR car);
+    void showCarInfo(CarsR car, ArrayList<CarState> carState);
 
     void showCarInfoInTrack(Track track);
 

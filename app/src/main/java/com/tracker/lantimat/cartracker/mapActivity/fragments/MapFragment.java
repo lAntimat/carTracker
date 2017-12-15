@@ -127,6 +127,7 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
         //setHasOptionsMenu(true);
         Configuration.getInstance().load(getContext(), PreferenceManager.getDefaultSharedPreferences(getContext()));
         arCarMarkers = new ArrayList<>();
+        //setRetainInstance(true);
     }
 
 
@@ -400,10 +401,8 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
         }
 
         mCompassOverlay.disableCompass();
-        mLocationOverlay.disableFollowLocation();
         mLocationOverlay.disableMyLocation();
         mScaleBarOverlay.enableScaleBar();
-
         showMapsMenu(false);
     }
 
@@ -426,10 +425,9 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
             lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0l, 0f, this);
         } catch (Exception ex) {
         }
-
-        mLocationOverlay.enableFollowLocation();
         mLocationOverlay.enableMyLocation();
         mScaleBarOverlay.disableScaleBar();
+        //moveCameraToGeopointLocation();
         super.onResume();
     }
 
