@@ -1,6 +1,7 @@
 package com.tracker.lantimat.cartracker.mapActivity;
 
 import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
+import com.tracker.lantimat.cartracker.mapActivity.API.TrackR;
 import com.tracker.lantimat.cartracker.mapActivity.models.CarState;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
@@ -23,23 +24,23 @@ public interface MapView {
 
     void showTrack(Date date);
 
-    void showPath(ArrayList<Track> ar);
+    void showPath(ArrayList<TrackR> ar);
 
     void clearPath();
 
-    void addMarker(int position, Track track);
+    void addMarker(int position, TrackR track);
 
-    void showTracksInFragment(ArrayList<Track> tracks);
+    void showTracksInFragment(ArrayList<TrackR> tracks);
 
     void setBsDateSpeed(Date time, Double speed, int position);
 
     void showTrackLengthInfo(String trackLength);
 
-    void showTrackingCarPosition(Track track);
+    void showTrackingCarPosition(TrackR track);
 
     void showCarInfo(CarsR car, ArrayList<CarState> carState);
 
-    void showCarInfoInTrack(Track track);
+    void showCarInfoInTrack(TrackR track);
 
     void showUserInfoLoading();
 

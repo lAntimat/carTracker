@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.tracker.lantimat.cartracker.R;
+import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
+import com.tracker.lantimat.cartracker.mapActivity.API.TrackR;
 import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
 import com.tracker.lantimat.cartracker.mapActivity.bottomSheetsTimeline.TimeLineAdapter;
 import com.tracker.lantimat.cartracker.mapActivity.bottomSheetsTimeline.model.OrderStatus;
@@ -106,8 +108,8 @@ public class TrackFragment extends Fragment implements MapActivity.TrackFragment
         mRecyclerView.setAdapter(mTimeLineAdapter);
     }
 
-    private void addDataToRecyclerView(ArrayList<Track> tracks) {
-        arraySort(tracks);
+    private void addDataToRecyclerView(ArrayList<TrackR> tracks) {
+        //arraySort(tracks);
     }
 
 
@@ -210,7 +212,7 @@ public class TrackFragment extends Fragment implements MapActivity.TrackFragment
     }
 
     @Override
-    public void addTracks(ArrayList<Track> tracks) {
+    public void addTracks(ArrayList<TrackR> tracks) {
         addDataToRecyclerView(tracks);
         mTimeLineAdapter.notifyDataSetChanged();
     }

@@ -3,6 +3,7 @@ package com.tracker.lantimat.cartracker.mapActivity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -15,6 +16,7 @@ import com.tracker.lantimat.cartracker.mapActivity.API.ApiUtils;
 import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
 import com.tracker.lantimat.cartracker.mapActivity.API.SOService;
 import com.tracker.lantimat.cartracker.mapActivity.API.State;
+import com.tracker.lantimat.cartracker.mapActivity.API.TrackR;
 import com.tracker.lantimat.cartracker.mapActivity.models.CarState;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
@@ -35,6 +37,7 @@ import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -47,13 +50,14 @@ public class MapPresenter {
     final static String TAG = "MapPresenter";
 
     private Disposable disposable;
+    private Observable observable;
 
 
     private MapView mapView;
     private Context context;
     private BottomSheetsTrack bottomSheetsTrack;
 
-    private ArrayList<Track> arTrack = new ArrayList<Track>();
+    private ArrayList<TrackR> arTrack = new ArrayList<>();
     private ArrayList<Cars> arCars = new ArrayList<Cars>();
     private ArrayList<CarsR> arCarsR = new ArrayList<>();
 
@@ -133,25 +137,25 @@ public class MapPresenter {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 Track track = document.toObject(Track.class);
 
-                                arTrack.add(track); //Добавляем координаты в массив
+                                //arTrack.add(track); //Добавляем координаты в массив
 
                                 //Вычисляем пройденный путь за трек
                                 if (arTrack.size() > 0) {
-                                    trackLength += distanceBetween(arTrack.get(arTrack.size() - 1).getGeoPoint(), track.getGeoPoint()); //Расстояние между двумя точками
+                                    //trackLength += distanceBetween(arTrack.get(arTrack.size() - 1).getGeoPoint(), track.getGeoPoint()); //Расстояние между двумя точками
                                     averageSpeed += track.getSpeed();
                                     Log.d(TAG, "trackLength " + trackLength);
 
                                 }
 
                                 if (track.getSpeed() * 3.6 > 90) {
-                                    mapView.addMarker(arTrack.size() - 1, track); //Добавляю трек в короткий массив, с позицией в полном массиве
+                                    //mapView.addMarker(arTrack.size() - 1, track); //Добавляю трек в короткий массив, с позицией в полном массиве
                                 }
                             }
 
 
                             averageSpeed = averageSpeed/arTrack.size();
 
-                            trackTime = arTrack.get(arTrack.size() - 1).getTimestamp().getTime() - arTrack.get(0).getTimestamp().getTime();
+                            //trackTime = arTrack.get(arTrack.size() - 1).getTimestamp().getTime() - arTrack.get(0).getTimestamp().getTime();
 
                             TrackInfo trackInfo = new TrackInfo(trackLength, averageSpeed, trackTime);
                             mapView.showTrackInfo(trackInfo);
@@ -166,6 +170,70 @@ public class MapPresenter {
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
+                    }
+                });
+    }
+
+    public void getTrack(String id, long begin, long end) {
+        if (carSelectedPosition == -1) return;
+        setMode(Mode.TRACK_LOADING);
+
+        begin = 1513677600000L;
+        end = 1513688400000L;
+        mService.getTrack(arCarsR.get(carSelectedPosition).get_id(), begin, end)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<ArrayList<TrackR>>() {
+                    @Override
+                    public void onNext(ArrayList<TrackR> trackRS) {
+                        Log.d(TAG, "onComplete");
+
+                        clearPath();
+                        ArrayList<Track> arMarkedTrack = new ArrayList<Track>();
+                        ArrayList<Track> arTrackTest = new ArrayList<Track>();
+
+                        Double trackLength = 0D;
+                        long trackTime = 0;
+                        Double averageSpeed = 0D;
+
+                        arTrack.addAll(trackRS); //Добавляем координаты в массив
+                        Log.d(TAG, "array size " + arTrack.size());
+
+                        //Вычисляем пройденный путь за трек
+                        if (arTrack.size() > 0) {
+                            //trackLength += distanceBetween(arTrack.get(arTrack.size() - 1).getState().getLat(), track.getGeoPoint()); //Расстояние между двумя точками
+                            //averageSpeed += track.getSpeed();
+                            Log.d(TAG, "trackLength " + trackLength);
+
+                        }
+
+                        //if (track.getSpeed() * 3.6 > 90) {
+                        //  mapView.addMarker(arTrack.size() - 1, track); //Добавляю трек в короткий массив, с позицией в полном массиве
+                        //}
+
+                        //averageSpeed = averageSpeed/arTrack.size();
+
+                        //trackTime = arTrack.get(arTrack.size() - 1).getTimestamp().getTime() - arTrack.get(0).getTimestamp().getTime();
+
+                        TrackInfo trackInfo = new TrackInfo(trackLength, averageSpeed, trackTime);
+                        mapView.showTrackInfo(trackInfo);
+
+                        mapView.showPath(arTrack);
+                        bottomSheetsTrack.setSeekBarMax(arTrack.size());
+                        mapView.showTracksInFragment(arTrack);
+                        mapView.showTrackLengthInfo(String.valueOf(trackLength));
+                        Log.d(TAG, "track Length " + trackLength);
+                        setMode(Mode.TRACK);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "error " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "onComplete");
                     }
                 });
     }
@@ -245,8 +313,8 @@ public class MapPresenter {
         ArrayList<CarState> ar = new ArrayList<>();
         ar.add(new CarState("Угол", String.valueOf(state.getAngle())));
         ar.add(new CarState("Скорость", String.valueOf(state.getSpeed())));
-        ar.add(new CarState("Напряжение батареи", String.valueOf(state.getBat_voltage())));
-        ar.add(new CarState("Уровень топлива", String.valueOf(state.getFuel())));
+        ar.add(new CarState("Напряжение батареи", String.valueOf(state.getBatVoltage())));
+        ar.add(new CarState("Уровень топлива", String.valueOf(state.getDriver_message())));
         return ar;
     }
 
@@ -285,7 +353,7 @@ public class MapPresenter {
     }
 
 
-    public void makePath(ArrayList<Track> ar) {
+    public void makePath(ArrayList<TrackR> ar) {
 
         mapView.showPath(ar);
 
@@ -297,7 +365,7 @@ public class MapPresenter {
     }
 
     public void trackMarkerClick(int position) {
-        mapView.setBsDateSpeed(arTrack.get(position).getTimestamp(), arTrack.get(position).getSpeed(), position);
+        mapView.setBsDateSpeed(new Date((long) arTrack.get(position).getTime()), arTrack.get(position).getSpeed(), position);
     }
 
     public void carMarkerClick(int position) {
@@ -320,17 +388,19 @@ public class MapPresenter {
         if(carSelectedPosition == arCarsR.size()) carSelectedPosition = 0;
         mapView.showCarInfo(arCarsR.get(carSelectedPosition), stateFromApiToCarState(arCarsR.get(carSelectedPosition).getState()));
         //loadUserInfo(arCarsR.get(position).getDriverId());
-        mapView.showUserInfo(new User(0,0, "", arCarsR.get(carSelectedPosition).getName(), arCarsR.get(carSelectedPosition).getStatus(), ""));
+        mapView.showUserInfo(new User(0,0, "", arCarsR.get(carSelectedPosition).getName(), arCarsR.get(carSelectedPosition).getType(), ""));
         setMode(Mode.CAR_SELECTED);
     }
 
-    public void showCarsList() {
-        ArrayList<Cars> cars = new ArrayList<>();
-        cars.addAll(arCars);
+    public void showCars() {
+        mapView.showCars(arCarsR, carSelectedPosition);
+    }
+
+    public void showCarsListFragment() {
         mapView.showCarsListFragment(arCarsR, carSelectedPosition);
     }
 
-    public void hideCarsList() {
+    public void hideCarsListFragment() {
         mapView.hideCarsListFragment();
     }
 
@@ -354,11 +424,11 @@ public class MapPresenter {
 
     public void trackSeekBar(int position) {
         if (position != -1 & arTrack.size() > position) {
-            mapView.setBsDateSpeed(arTrack.get(position).getTimestamp(), arTrack.get(position).getSpeed(), position);
+            mapView.setBsDateSpeed(new Date((long) arTrack.get(position).getTime()), arTrack.get(position).getSpeed(), position);
             mapView.showCarInfoInTrack(arTrack.get(position));
 
             mapView.showTrackingCarPosition(arTrack.get(position));
-            Log.d(TAG, arTrack.get(position).getGeoPoint().toString());
+            //Log.d(TAG, arTrack.get(position).getGeoPoint().toString());
         }
     }
 

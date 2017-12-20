@@ -16,6 +16,7 @@ import okhttp3.Credentials;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -29,12 +30,17 @@ public class RetrofitClient {
     private static Retrofit retrofit = null;
 
     public static void initClient() {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+// set your desired log level
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
         okHttpClient = new OkHttpClient().newBuilder()
                 .connectTimeout(60 * 5, TimeUnit.SECONDS)
                 .readTimeout(60 * 5, TimeUnit.SECONDS)
                 .writeTimeout(60 * 5, TimeUnit.SECONDS);
         okHttpClient.interceptors().add(new AddCookiesInterceptor());
         okHttpClient.interceptors().add(new ReceivedCookiesInterceptor());
+        okHttpClient.addInterceptor(logging);
     }
 
     public static Retrofit getClient(String baseUrl) {

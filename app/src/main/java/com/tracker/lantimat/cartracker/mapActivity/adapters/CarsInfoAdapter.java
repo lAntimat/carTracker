@@ -36,7 +36,7 @@ public class CarsInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
 
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_report, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_car_info, parent, false);
         return new SecondViewHolder(view);
 
     }

@@ -1,10 +1,8 @@
 package com.tracker.lantimat.cartracker.mapActivity;
 
 import android.app.DatePickerDialog;
-import android.app.backup.SharedPreferencesBackupHelper;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,6 +29,7 @@ import com.tracker.lantimat.cartracker.R;
 import com.tracker.lantimat.cartracker.mapActivity.API.ApiUtils;
 import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
 import com.tracker.lantimat.cartracker.mapActivity.API.SOService;
+import com.tracker.lantimat.cartracker.mapActivity.API.TrackR;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.CarInfoFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.CarInfoInTrackFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.CarsListFragment;
@@ -44,8 +43,6 @@ import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
 import com.tracker.lantimat.cartracker.mapActivity.models.TrackInfo;
 import com.tracker.lantimat.cartracker.mapActivity.models.User;
-import com.tracker.lantimat.cartracker.quantor.pack.response;
-import com.tracker.lantimat.cartracker.utils.SharedPreferenceHelper;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -57,6 +54,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import me.relex.circleindicator.CircleIndicator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -79,6 +77,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
     BottomSheetsTrack bottomSheetsTrack;
     BottomSheetsCar bottomSheetsCar;
 
+    CircleIndicator indicator;
     Calendar dateAndTime = Calendar.getInstance();
 
     public MapPresenter mapPresenter;
@@ -94,18 +93,19 @@ public class MapActivity extends AppCompatActivity implements MapView {
     CarInfoInTrackFragmentListener carInfoInTrackFragmentListener;
     UserInfoFragmentListener userInfoFragmentListener;
     TrackInfoFragmentListener trackInfoFragmentListener;
+    CarsListFragmentListener carsListFragmentListener;
 
 
     public interface MapFragmentUpdateListener {
         void onDataUpdate();
 
-        void showPath(ArrayList<Track> ar);
+        void showPath(ArrayList<TrackR> ar);
 
         void clearPath();
 
-        void addMarker(int position, Track track, String title, String subtitle);
+        void addMarker(int position, TrackR track, String title, String subtitle);
 
-        void showTrackingCarPositionMarker(Track track);
+        void showTrackingCarPositionMarker(TrackR track);
 
         void showCars(ArrayList<CarsR> cars, int selectedPosition);
 
@@ -114,13 +114,13 @@ public class MapActivity extends AppCompatActivity implements MapView {
         void setCenter(GeoPoint geoPoint);
     }
     public interface TrackFragmentListener {
-        void addTracks(ArrayList<Track> tracks);
+        void addTracks(ArrayList<TrackR> tracks);
     }
     public interface CarInfoFragmentListener{
         void addDate(ArrayList<CarState> ar);
     }
     public interface CarInfoInTrackFragmentListener{
-        void addDate(Track track);
+        void addDate(TrackR track);
     }
     public interface UserInfoFragmentListener{
         void addDate(User user);
@@ -129,6 +129,11 @@ public class MapActivity extends AppCompatActivity implements MapView {
     public interface TrackInfoFragmentListener{
         void addDate(TrackInfo trackInfo);
         void showLoading();
+    }
+    public interface CarsListFragmentListener{
+        void addDate(ArrayList<CarsR> carsRS);
+        void showLoading();
+        void hideLoading();
     }
 
     public synchronized void registerDataUpdateListener(MapFragmentUpdateListener listener) {
@@ -151,9 +156,15 @@ public class MapActivity extends AppCompatActivity implements MapView {
     public synchronized void registerTrackInfoFragmentListener(TrackInfoFragmentListener listener) {
         trackInfoFragmentListener = listener;
     }
+    public synchronized void registerCarsListFragmentListener(CarsListFragmentListener listener) {
+        carsListFragmentListener = listener;
+    }
 
     public synchronized void unregisterDataUpdateListener(MapFragmentUpdateListener listener) {
         //mListeners.remove(listener);
+    }
+    public synchronized void unregisterCarsListListener(CarsListFragmentListener listener) {
+        listener = null;
     }
 
     public synchronized void dataUpdated() {
@@ -170,7 +181,8 @@ public class MapActivity extends AppCompatActivity implements MapView {
             dateAndTime.set(Calendar.MONTH, i1);
             dateAndTime.set(Calendar.DAY_OF_MONTH, i2);
             Date date = new Date(dateAndTime.getTimeInMillis());
-            mapPresenter.loadTrack(date);
+            //mapPresenter.loadTrack(date);
+            mapPresenter.getTrack("", dateAndTime.getTimeInMillis(), new Date().getTime());
         }
     };
 
@@ -298,6 +310,8 @@ public class MapActivity extends AppCompatActivity implements MapView {
     }
 
     private void initPagerAdapter() {
+
+        indicator = (CircleIndicator) findViewById(R.id.indicator_custom);
         //Инициализация ViewPager
         pagerTrackBs = (ViewPager) findViewById(R.id.pager_track);
         pagerAdapterTrack = new TrackBsheetsPagerAdapter(getSupportFragmentManager());
@@ -309,10 +323,13 @@ public class MapActivity extends AppCompatActivity implements MapView {
         pagerCarInfoBs.setAdapter(pagerAdapterCar);
         pagerCarInfoBs.setOffscreenPageLimit(3);
 
+        indicator.setViewPager(pagerCarInfoBs);
+
+
     }
 
     public void showFragment(View view) {
-       mapPresenter.showCarsList();
+       mapPresenter.showCarsListFragment();
     }
 
     public void btnClick2(View view) {
@@ -405,16 +422,16 @@ public class MapActivity extends AppCompatActivity implements MapView {
     }
 
     @Override
-    public void addMarker(int position, Track track) {
+    public void addMarker(int position, TrackR track) {
         SimpleDateFormat sf = new SimpleDateFormat("hh:mm");
-        String formattedDate = sf.format(track.getTimestamp());
-        String subTitle = "Скорость " + track.getSpeed() * 3.6;
+        String formattedDate = sf.format(track.getTime());
+        String subTitle = "Скорость " + track.getSpeed();
 
         mapFragmentUpdateListener.addMarker(position, track, formattedDate, subTitle);
     }
 
     @Override
-    public void showTracksInFragment(ArrayList<Track> tracks) {
+    public void showTracksInFragment(ArrayList<TrackR> tracks) {
         trackFragmentListener.addTracks(tracks);
     }
 
@@ -434,7 +451,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
     }
 
     @Override
-    public void showTrackingCarPosition(Track track) {
+    public void showTrackingCarPosition(TrackR track) {
         mapFragmentUpdateListener.showTrackingCarPositionMarker(track);
     }
 
@@ -449,7 +466,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
     }
 
     @Override
-    public void showCarInfoInTrack(Track track) {
+    public void showCarInfoInTrack(TrackR track) {
         carInfoInTrackFragmentListener.addDate(track); //Показываем подробную инфу во фрагменте
     }
 
@@ -472,6 +489,11 @@ public class MapActivity extends AppCompatActivity implements MapView {
     @Override
     public void showCars(ArrayList<CarsR> ar, int selectedPosition) {
         mapFragmentUpdateListener.showCars(ar, selectedPosition);
+
+        if(carsListFragmentListener!=null & ar.size() > 0) {
+            carsListFragmentListener.hideLoading();
+            carsListFragmentListener.addDate(ar);
+        }
     }
 
     @Override
@@ -482,18 +504,16 @@ public class MapActivity extends AppCompatActivity implements MapView {
     @Override
     public void showCarsListFragment(ArrayList<CarsR> ar, int selectedPosition) {
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("1" , ar);/**/
+        //bundle.putParcelableArrayList("1" , ar);/**/
 
-        CarsListFragment carsListFragment = CarsListFragment.newInstance(ar);
+        CarsListFragment carsListFragment = new CarsListFragment();
 
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                //.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                 .add(R.id.map_activity_content_with_toolbar_frame, carsListFragment)
                 .addToBackStack("list")
                 .commit();
-
-        //Log.d(TAG, "showCarsListFragment");
     }
 
     @Override
@@ -505,7 +525,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
     }
 
     @Override
-    public void showPath(ArrayList<Track> ar) {
+    public void showPath(ArrayList<TrackR> ar) {
         mapFragmentUpdateListener.showPath(ar);
     }
 

@@ -35,8 +35,8 @@
         android:layout_margin="10dp"
         android:background="@drawable/round_button"
         android:cropToPadding="false"
-        android:onClick="showBottomSheets"
         android:padding="12dp"
+        android:visibility="gone"
         app:srcCompat="@drawable/brightness1" />
 
     <ImageButton
@@ -60,7 +60,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:onClick="showFragment"
-        android:text="Инфо о трекер" />
+        android:text="Список" />
 
     <Button
         android:id="@+id/button"

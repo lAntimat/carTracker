@@ -12,18 +12,37 @@
     app:behavior_peekHeight="70dp"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:gravity="center_vertical|center_horizontal|center">
+        android:layout_height="70dp"
+        android:gravity="center_vertical|center_horizontal|center"
+        android:orientation="vertical">
 
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/apple_keyboard_control" />
 
         <RelativeLayout
             android:id="@+id/peek_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="visible"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView">
 
             <TextView
                 android:id="@+id/tvTitle"
@@ -47,8 +66,8 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:padding="5dp"
                 android:foreground="?attr/selectableItemBackground"
+                android:padding="5dp"
                 app:srcCompat="@drawable/ic_menu_left_black_36dp" />
 
             <ImageView
@@ -57,8 +76,8 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:padding="5dp"
                 android:foreground="?attr/selectableItemBackground"
+                android:padding="5dp"
                 app:srcCompat="@drawable/ic_menu_right_black_36dp" />
 
             <TextView
@@ -94,7 +113,9 @@
         <RelativeLayout
             android:id="@+id/peek_progress"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            app:layout_constraintTop_toBottomOf="@+id/imageView">
 
             <ProgressBar
                 android:id="@+id/progressBar"
@@ -105,7 +126,15 @@
                 android:layout_centerVertical="true" />
         </RelativeLayout>
 
-    </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
+
+    <me.relex.circleindicator.CircleIndicator
+        android:id="@+id/indicator_custom"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        app:ci_drawable="@drawable/circle"
+        app:ci_height="5dp"
+        app:ci_width="5dp" />
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -117,7 +146,7 @@
         <android.support.v4.view.ViewPager
             android:id="@+id/pager_car"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></android.support.v4.view.ViewPager>
+            android:layout_height="match_parent" />
 
         <FrameLayout
             android:id="@+id/b_sheets_content_frame"
@@ -127,7 +156,10 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/toolbar"
-            android:visibility="gone" />
+            android:visibility="gone">
+
+        </FrameLayout>
+
     </android.support.v7.widget.CardView>
 
 </LinearLayout>

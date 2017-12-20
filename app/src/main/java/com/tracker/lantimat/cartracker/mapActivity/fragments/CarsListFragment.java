@@ -17,7 +17,6 @@ import com.tracker.lantimat.cartracker.R;
 import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
 import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
 import com.tracker.lantimat.cartracker.mapActivity.adapters.CarsListRecyclerAdapter;
-import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.utils.ItemClickSupport;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ import java.util.ArrayList;
  * Created by GabdrakhmanovII on 28.07.2017.
  */
 
-public class CarsListFragment extends Fragment {
+public class CarsListFragment extends Fragment implements MapActivity.CarsListFragmentListener {
 
     final static String TAG = "CarListFragment";
 
@@ -44,7 +43,7 @@ public class CarsListFragment extends Fragment {
 
     public static CarsListFragment newInstance(ArrayList<CarsR> ar) {
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("ar", ar);
+        //bundle.putParcelableArrayList("ar", ar);
 
         CarsListFragment fragment = new CarsListFragment();
         fragment.setArguments(bundle);
@@ -54,7 +53,7 @@ public class CarsListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //important! set your user agent to prevent getting banned from the osm servers
+        ((MapActivity) getActivity()).registerCarsListFragmentListener(this);
     }
 
     @Override
@@ -63,7 +62,6 @@ public class CarsListFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_cars_list, null);
         progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.INVISIBLE);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         toolbar.setTitle("Все автомобили");
 
@@ -77,16 +75,24 @@ public class CarsListFragment extends Fragment {
          MapFragment fragment = (MapFragment) fm.findFragmentByTag(Constants.MAP_FRAGMENT);
          //fragment.showTrack();*/
 
-        readBundle(getArguments());
+        //readBundle(getArguments());
         initRecyclerView(v);
-
         btnListeners();
+
+        ((MapActivity) getActivity()).mapPresenter.showCars();
+
         return v;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+    }
+
+    @Override
+    public void onDetach() {
+        ((MapActivity) getActivity()).unregisterCarsListListener(this);
+        super.onDetach();
     }
 
     private void initView() {
@@ -97,7 +103,7 @@ public class CarsListFragment extends Fragment {
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MapActivity)getActivity()).mapPresenter.hideCarsList();
+                ((MapActivity)getActivity()).mapPresenter.hideCarsListFragment();
             }
         });
     }
@@ -113,7 +119,7 @@ public class CarsListFragment extends Fragment {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 ((MapActivity)getActivity()).mapPresenter.setCar(position);
-                ((MapActivity)getActivity()).mapPresenter.hideCarsList();
+                ((MapActivity)getActivity()).mapPresenter.hideCarsListFragment();
 
             }
         });
@@ -122,7 +128,7 @@ public class CarsListFragment extends Fragment {
 
     private void readBundle(Bundle bundle) {
         if (bundle != null) {
-           ar = bundle.getParcelableArrayList("ar");
+           //ar = bundle.getParcelableArrayList("ar");
             toolbar.setSubtitle("количество " + ar.size());
         }
     }
@@ -130,5 +136,23 @@ public class CarsListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void addDate(ArrayList<CarsR> carsRS) {
+        ar.clear();
+        ar.addAll(carsRS);
+        carsRecyclerAdapter.notifyDataSetChanged();
+        toolbar.setSubtitle("количество " + ar.size());
+    }
+
+    @Override
+    public void showLoading() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideLoading() {
+        progressBar.setVisibility(View.INVISIBLE);
     }
 }

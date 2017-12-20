@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.tracker.lantimat.cartracker.R;
 import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
+import com.tracker.lantimat.cartracker.mapActivity.API.TrackR;
 import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
 import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
@@ -552,7 +553,7 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
     }
 
     @Override
-    public void showPath(ArrayList<Track> ar) {
+    public void showPath(ArrayList<TrackR> ar) {
 
         if(carNowPositionOverlay!=null) carNowPositionOverlay.removeAllItems();
 
@@ -561,7 +562,7 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
         line.setColor(R.color.md_green_900);
         List<GeoPoint> pts = new ArrayList<>();
         for (int i = 0; i < ar.size(); i++) {
-            pts.add(new GeoPoint(ar.get(i).getGeoPoint().getLatitude(), ar.get(i).getGeoPoint().getLongitude()));
+            pts.add(new GeoPoint(ar.get(i).getLat(), ar.get(i).getLon()));
             //addMarker(cars.get(i));
         }
         if (pts.isEmpty()) {
@@ -599,7 +600,7 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
     }
 
     @Override
-    public void addMarker(int position, Track track, String title, String subtitle) {
+    public void addMarker(int position, TrackR track, String title, String subtitle) {
         /*Marker m = new Marker(mMapView);
         m.setPosition(new GeoPoint(track.getGeoPoint().getLatitude(), track.getGeoPoint().getLongitude()));
         m.setSnippet(title);
@@ -607,7 +608,7 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
         m.setIcon(getResources().getDrawable(R.drawable.ic_adjust_black_18dp));
         arCarMarkers.add(m);*/
 
-        OverlayItem olItem = new OverlayItem(String.valueOf(position), title, subtitle, new GeoPoint(track.getGeoPoint().getLatitude(), track.getGeoPoint().getLongitude()));//marker
+        OverlayItem olItem = new OverlayItem(String.valueOf(position), title, subtitle, new GeoPoint(track.getLat(), track.getLon()));//marker
         olItem.setMarker(getResources().getDrawable(R.drawable.ic_adjust_black_36dp));
         overlayItemArray.add(olItem);
         mMapView.invalidate();
@@ -616,13 +617,13 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
     }
 
     @Override
-    public void showTrackingCarPositionMarker(Track track) {
+    public void showTrackingCarPositionMarker(TrackR track) {
         if (showTrackCarOverlay.size() > 0) showTrackCarOverlay.removeItem(0);
 
-        OverlayItem olItem = new OverlayItem("", "", new GeoPoint(track.getGeoPoint().getLatitude(), track.getGeoPoint().getLongitude()));//marker
+        OverlayItem olItem = new OverlayItem("", "", new GeoPoint(track.getLat(), track.getLon()));//marker
         olItem.setMarker(getResources().getDrawable(R.drawable.car));
         showTrackCarOverlay.addItem(olItem);
-        GeoPoint g = new GeoPoint(track.getGeoPoint().getLatitude(), track.getGeoPoint().getLongitude());
+        GeoPoint g = new GeoPoint(track.getLat(), track.getLon());
         moveCameraToGeopointLocation(g, false);
         mMapView.invalidate();
 
