@@ -13,19 +13,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.tracker.lantimat.cartracker.R;
-import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
+import com.tracker.lantimat.cartracker.mapActivity.API.State;
 import com.tracker.lantimat.cartracker.mapActivity.API.TrackR;
 import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
-import com.tracker.lantimat.cartracker.mapActivity.bottomSheetsTimeline.TimeLineAdapter;
-import com.tracker.lantimat.cartracker.mapActivity.bottomSheetsTimeline.model.Orientation;
-import com.tracker.lantimat.cartracker.mapActivity.bottomSheetsTimeline.model.TimeLineModel;
-import com.tracker.lantimat.cartracker.mapActivity.models.Track;
+import com.tracker.lantimat.cartracker.mapActivity.adapters.CarsInfoAdapter;
+import com.tracker.lantimat.cartracker.mapActivity.models.CarState;
 import com.tracker.lantimat.cartracker.utils.ItemClickSupport;
 
 import org.osmdroid.config.Configuration;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by GabdrakhmanovII on 28.07.2017.
@@ -40,10 +37,8 @@ public class CarInfoInTrackFragment extends Fragment implements MapActivity.CarI
     TextView textView;
 
     private RecyclerView mRecyclerView;
-    private TimeLineAdapter mTimeLineAdapter;
-    private List<TimeLineModel> mDataList = new ArrayList<>();
-    private Orientation mOrientation = Orientation.VERTICAL;
-    private boolean mWithLinePadding = false;
+    private CarsInfoAdapter carsInfoAdapter;
+    private ArrayList<CarState> ar = new ArrayList<>();
 
     public CarInfoInTrackFragment() {
     }
@@ -82,7 +77,7 @@ public class CarInfoInTrackFragment extends Fragment implements MapActivity.CarI
 
     private void initRecyclerView(View v) {
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
-        mRecyclerView.setLayoutManager(getLinearLayoutManager());
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setHasFixedSize(true);
 
         ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
@@ -101,20 +96,8 @@ public class CarInfoInTrackFragment extends Fragment implements MapActivity.CarI
 
     private void initView() {
         //setDataListItems();
-        mTimeLineAdapter = new TimeLineAdapter(mDataList, mOrientation, mWithLinePadding);
-        mRecyclerView.setAdapter(mTimeLineAdapter);
-    }
-
-    private void addDataToRecyclerView(ArrayList<Track> tracks) {
-
-    }
-
-    private LinearLayoutManager getLinearLayoutManager() {
-        if (mOrientation == Orientation.HORIZONTAL) {
-            return new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        } else {
-            return new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        }
+        carsInfoAdapter = new CarsInfoAdapter(getContext(), ar);
+        mRecyclerView.setAdapter(carsInfoAdapter);
     }
 
     @Override
@@ -124,8 +107,10 @@ public class CarInfoInTrackFragment extends Fragment implements MapActivity.CarI
     }
 
     @Override
-    public void addDate(TrackR track) {
+    public void addDate(ArrayList<CarState> ar) {
+        this.ar.clear();
+        this.ar.addAll(ar);
+        carsInfoAdapter.notifyDataSetChanged();
         Log.d(TAG, "addDate");
-        textView.setText("Скорость " + track.getSpeed() + "\nУровень масла " + track.getSpeed() + "\nДвигатель работает " + track.getEx_dig_in_1() + "\n" + track.toString());
     }
 }

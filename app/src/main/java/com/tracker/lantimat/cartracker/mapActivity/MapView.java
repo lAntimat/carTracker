@@ -40,7 +40,7 @@ public interface MapView {
 
     void showCarInfo(CarsR car, ArrayList<CarState> carState);
 
-    void showCarInfoInTrack(TrackR track);
+    void showCarInfoInTrack(ArrayList<CarState> track);
 
     void showUserInfoLoading();
 
@@ -55,6 +55,10 @@ public interface MapView {
     void showCarsListFragment(ArrayList<CarsR> ar, int selectedPosition);
 
     void hideCarsListFragment();
+
+    void showDateTimeFragment();
+
+    void hideDateTimeFragment();
 
     void onModeChange(Mode mode);
 

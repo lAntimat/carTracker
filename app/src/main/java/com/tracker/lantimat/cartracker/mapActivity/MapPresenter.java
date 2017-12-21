@@ -96,83 +96,6 @@ public class MapPresenter {
 
     }
 
-    public void loadTrack(Date date) {
-        //Date date = new Date();
-        //date.setTime(1508986177000L);
-
-        if (carSelectedPosition == -1) return;
-
-        setMode(Mode.TRACK_LOADING);
-
-        DayUtil dayUtil = new DayUtil();
-        dayUtil.getStartOfDayInMillis(date);
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection(FbConstants.TRACKS)
-                .whereEqualTo("carId", arCars.get(carSelectedPosition).getId())
-                .whereGreaterThanOrEqualTo("timestamp", dayUtil.getStartOfDayInMillis(date))
-                .whereLessThan("timestamp", dayUtil.getEndOfDayInMillis(date))
-                .orderBy("timestamp")
-                //.limit(100)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-
-                            if(task.getResult().size() == 0) {
-                                mapView.showError("Нет данных!");
-                                setMode(Mode.CAR_SELECTED);
-                                return;
-                            }
-
-                            clearPath();
-                            ArrayList<Track> arMarkedTrack = new ArrayList<Track>();
-                            ArrayList<Track> arTrackTest = new ArrayList<Track>();
-
-                            Double trackLength = 0D;
-                            long trackTime = 0;
-                            Double averageSpeed = 0D;
-                            for (DocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                Track track = document.toObject(Track.class);
-
-                                //arTrack.add(track); //Добавляем координаты в массив
-
-                                //Вычисляем пройденный путь за трек
-                                if (arTrack.size() > 0) {
-                                    //trackLength += distanceBetween(arTrack.get(arTrack.size() - 1).getGeoPoint(), track.getGeoPoint()); //Расстояние между двумя точками
-                                    averageSpeed += track.getSpeed();
-                                    Log.d(TAG, "trackLength " + trackLength);
-
-                                }
-
-                                if (track.getSpeed() * 3.6 > 90) {
-                                    //mapView.addMarker(arTrack.size() - 1, track); //Добавляю трек в короткий массив, с позицией в полном массиве
-                                }
-                            }
-
-
-                            averageSpeed = averageSpeed/arTrack.size();
-
-                            //trackTime = arTrack.get(arTrack.size() - 1).getTimestamp().getTime() - arTrack.get(0).getTimestamp().getTime();
-
-                            TrackInfo trackInfo = new TrackInfo(trackLength, averageSpeed, trackTime);
-                            mapView.showTrackInfo(trackInfo);
-
-                            mapView.showPath(arTrack);
-                            bottomSheetsTrack.setSeekBarMax(arTrack.size());
-                            mapView.showTracksInFragment(arTrack);
-                            mapView.showTrackLengthInfo(String.valueOf(trackLength));
-                            Log.d(TAG, "track Length " + trackLength);
-                            setMode(Mode.TRACK);
-
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-    }
 
     public void getTrack(String id, long begin, long end) {
         if (carSelectedPosition == -1) return;
@@ -238,56 +161,6 @@ public class MapPresenter {
                 });
     }
 
-    public void loadCars() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        db.collection(FbConstants.CARS)
-                .orderBy("id")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                        if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
-                            return;
-                        }
-
-                        arCars.clear();
-                        for (DocumentSnapshot document : documentSnapshots) {
-                            Log.d(TAG, document.getId() + " => " + document.getData());
-                            Cars cars = document.toObject(Cars.class);
-                            arCars.add(cars);
-                        }
-
-                        //mapView.showCars(arCars, carSelectedPosition); //Отображаем машины на карте
-                        //if (carSelectedPosition != -1)
-                           // mapView.showCarInfo(arCars.get(carSelectedPosition)); //отображаем информацию о выделенной машине
-                    }
-                });
-    }
-
-    public void getObjects() {
-        /*mService.getObjects().enqueue(new Callback<ArrayList<CarsR>>() {
-            @Override
-            public void onResponse(Call<ArrayList<CarsR>> call, Response<ArrayList<CarsR>> response) {
-                if(response.isSuccessful()) {
-                    arCarsR = response.body();
-                    mapView.showCars(arCarsR, carSelectedPosition); //Отображаем машины на карте
-                    if (carSelectedPosition != -1)
-                        mapView.showCarInfo(arCarsR.get(carSelectedPosition)); //отображаем информацию о выделенной машине
-                    Log.d(TAG, "posts loaded from API");
-                }else {
-                    int statusCode  = response.code();
-                    // handle request errors depending on status code
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<CarsR>> call, Throwable t) {
-                Log.d(TAG, "onFailure" + t.getMessage());
-            }
-        });*/
-    }
-
     public void startGetObjectSchedule() {
         //ArrayList<CarsR> carsR = new ArrayList<>();
         Scheduler scheduler = Schedulers.from(Executors.newSingleThreadExecutor());
@@ -310,6 +183,14 @@ public class MapPresenter {
     }
 
     public ArrayList<CarState> stateFromApiToCarState(State state) {
+        ArrayList<CarState> ar = new ArrayList<>();
+        ar.add(new CarState("Угол", String.valueOf(state.getAngle())));
+        ar.add(new CarState("Скорость", String.valueOf(state.getSpeed())));
+        ar.add(new CarState("Напряжение батареи", String.valueOf(state.getBatVoltage())));
+        ar.add(new CarState("Уровень топлива", String.valueOf(state.getDriver_message())));
+        return ar;
+    }
+    public ArrayList<CarState> trackFromApiToCarState(TrackR state) {
         ArrayList<CarState> ar = new ArrayList<>();
         ar.add(new CarState("Угол", String.valueOf(state.getAngle())));
         ar.add(new CarState("Скорость", String.valueOf(state.getSpeed())));
@@ -404,6 +285,14 @@ public class MapPresenter {
         mapView.hideCarsListFragment();
     }
 
+    public void showDateTimeFragment() {
+        mapView.showDateTimeFragment();
+    }
+
+    public void hideDateTimeFragment() {
+        mapView.hideDateTimeFragment();
+    }
+
     public void nextCar() {  //при нажатии кнопки выбора след машины
         if (carSelectedPosition != -1) { //Если выбрана какая нибудь машина
             carSelectedPosition++;
@@ -425,7 +314,7 @@ public class MapPresenter {
     public void trackSeekBar(int position) {
         if (position != -1 & arTrack.size() > position) {
             mapView.setBsDateSpeed(new Date((long) arTrack.get(position).getTime()), arTrack.get(position).getSpeed(), position);
-            mapView.showCarInfoInTrack(arTrack.get(position));
+            mapView.showCarInfoInTrack(trackFromApiToCarState(arTrack.get(position)));
 
             mapView.showTrackingCarPosition(arTrack.get(position));
             //Log.d(TAG, arTrack.get(position).getGeoPoint().toString());

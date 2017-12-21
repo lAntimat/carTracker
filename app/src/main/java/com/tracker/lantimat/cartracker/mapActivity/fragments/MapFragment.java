@@ -621,7 +621,7 @@ public class MapFragment extends Fragment implements LocationListener, MapActivi
         if (showTrackCarOverlay.size() > 0) showTrackCarOverlay.removeItem(0);
 
         OverlayItem olItem = new OverlayItem("", "", new GeoPoint(track.getLat(), track.getLon()));//marker
-        olItem.setMarker(getResources().getDrawable(R.drawable.car));
+        olItem.setMarker(getResources().getDrawable(R.drawable.map_marker));
         showTrackCarOverlay.addItem(olItem);
         GeoPoint g = new GeoPoint(track.getLat(), track.getLon());
         moveCameraToGeopointLocation(g, false);

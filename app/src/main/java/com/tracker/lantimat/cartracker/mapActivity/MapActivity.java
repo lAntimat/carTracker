@@ -21,6 +21,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -33,6 +34,7 @@ import com.tracker.lantimat.cartracker.mapActivity.API.TrackR;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.CarInfoFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.CarInfoInTrackFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.CarsListFragment;
+import com.tracker.lantimat.cartracker.mapActivity.fragments.DateTimeFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.MapFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.TrackFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.TrackInfoFragment;
@@ -67,6 +69,8 @@ public class MapActivity extends AppCompatActivity implements MapView {
 
     Toolbar toolbar;
     MapFragment mapFragment;
+
+    ImageView ivClose, ivCarsList, ivDateTime;
 
     ViewPager pagerTrackBs;
     ViewPager pagerCarInfoBs;
@@ -120,7 +124,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
         void addDate(ArrayList<CarState> ar);
     }
     public interface CarInfoInTrackFragmentListener{
-        void addDate(TrackR track);
+        void addDate(ArrayList<CarState> track);
     }
     public interface UserInfoFragmentListener{
         void addDate(User user);
@@ -192,8 +196,16 @@ public class MapActivity extends AppCompatActivity implements MapView {
         Context ctx = getApplicationContext();
 
         setContentView(R.layout.activity_map);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
+
+        ivClose = (ImageView) findViewById(R.id.iv_close);
+        ivCarsList = (ImageView) findViewById(R.id.iv_cars);
+        ivDateTime = (ImageView) findViewById(R.id.iv_date_time);
+
+        ivCarsList.setOnClickListener(view -> mapPresenter.showCarsListFragment());
+
+        ivDateTime.setOnClickListener(view -> mapPresenter.showDateTimeFragment());
 
         bottomSheetsTrack = new BottomSheetsTrack(this);
         bottomSheetsCar = new BottomSheetsCar(this);
@@ -333,7 +345,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
     }
 
     public void btnClick2(View view) {
-        mapPresenter.loadCars();
+        //mapPresenter.loadCars();
     }
 
     private void showPopupMenu(View v, final int locationIsTo) {
@@ -402,11 +414,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
 
     // отображаем диалоговое окно для выбора даты
     public void setDate(View v) {
-        new DatePickerDialog(MapActivity.this, d,
-                dateAndTime.get(Calendar.YEAR),
-                dateAndTime.get(Calendar.MONTH),
-                dateAndTime.get(Calendar.DAY_OF_MONTH))
-                .show();
+        mapPresenter.showDateTimeFragment();
     }
 
 
@@ -466,7 +474,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
     }
 
     @Override
-    public void showCarInfoInTrack(TrackR track) {
+    public void showCarInfoInTrack(ArrayList<CarState> track) {
         carInfoInTrackFragmentListener.addDate(track); //Показываем подробную инфу во фрагменте
     }
 
@@ -518,6 +526,29 @@ public class MapActivity extends AppCompatActivity implements MapView {
 
     @Override
     public void hideCarsListFragment() {
+        FragmentManager manager = getSupportFragmentManager();
+        if (manager.getBackStackEntryCount() != 0) {
+            manager.popBackStack();
+        }
+    }
+
+    @Override
+    public void showDateTimeFragment() {
+        Bundle bundle = new Bundle();
+        //bundle.putParcelableArrayList("1" , ar);/**/
+
+        DateTimeFragment dateTimeFragment = new DateTimeFragment();
+
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                .add(R.id.map_activity_content_with_toolbar_frame, dateTimeFragment)
+                .addToBackStack("dateTime")
+                .commit();
+    }
+
+    @Override
+    public void hideDateTimeFragment() {
         FragmentManager manager = getSupportFragmentManager();
         if (manager.getBackStackEntryCount() != 0) {
             manager.popBackStack();
