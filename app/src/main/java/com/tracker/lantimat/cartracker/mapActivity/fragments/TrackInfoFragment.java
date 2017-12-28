@@ -104,7 +104,7 @@ public class TrackInfoFragment extends Fragment implements MapActivity.TrackInfo
 
         tvName.setText("Время в пути " + trackInfo.getTime());
         tvSubname.setText("Средняя скорость " + trackInfo.getAverageSpeed());
-        tvOther.setText("Пройдено расстояние " + trackInfo.getTrackLength());
+        tvOther.setText("Пройденное расстояние " + trackInfo.getTrackLength());
     }
 
     @Override

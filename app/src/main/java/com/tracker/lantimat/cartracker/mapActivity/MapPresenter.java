@@ -115,9 +115,9 @@ public class MapPresenter {
                         ArrayList<Track> arMarkedTrack = new ArrayList<Track>();
                         ArrayList<Track> arTrackTest = new ArrayList<Track>();
 
-                        Double trackLength = 0D;
-                        long trackTime = 0;
-                        Double averageSpeed = 0D;
+                        Double trackLength = 10000D;
+                        long trackTime = 1000*60*60;
+                        Double averageSpeed = 80D;
 
                         arTrack.addAll(trackRS); //Добавляем координаты в массив
                         Log.d(TAG, "array size " + arTrack.size());
@@ -190,6 +190,7 @@ public class MapPresenter {
         ar.add(new CarState("Уровень топлива", String.valueOf(state.getDriver_message())));
         return ar;
     }
+
     public ArrayList<CarState> trackFromApiToCarState(TrackR state) {
         ArrayList<CarState> ar = new ArrayList<>();
         ar.add(new CarState("Угол", String.valueOf(state.getAngle())));
