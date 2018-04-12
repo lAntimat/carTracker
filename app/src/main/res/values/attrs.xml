@@ -23,4 +23,12 @@
         <attr name="end_angle" format="float"/>
         <attr name="circle_fill" format="color"/>
     </declare-styleable>
+
+    <declare-styleable name="ImageWithTextButton">
+        <attr name="image" format="integer" />
+        <attr name="text" format="string" />
+        <attr name="tint" format="color" />
+        <attr name="android:ems" />
+
+    </declare-styleable>
 </resources>

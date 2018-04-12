@@ -35,6 +35,7 @@ import com.tracker.lantimat.cartracker.mapActivity.fragments.CarInfoFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.CarInfoInTrackFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.CarsListFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.DateTimeFragment;
+import com.tracker.lantimat.cartracker.mapActivity.fragments.GoogleMapFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.MapFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.TrackFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.TrackInfoFragment;
@@ -69,6 +70,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
 
     Toolbar toolbar;
     MapFragment mapFragment;
+    GoogleMapFragment gMapFragment;
 
     ImageView ivClose, ivCarsList, ivDateTime;
 
@@ -263,6 +265,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
 
     private void initFragment() {
         mapFragment = new MapFragment();
+        //gMapFragment = new GoogleMapFragment();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.map_activity_content_frame, mapFragment, Constants.MAP_FRAGMENT);
         ft.commit();
@@ -348,6 +351,14 @@ public class MapActivity extends AppCompatActivity implements MapView {
         //mapPresenter.loadCars();
     }
 
+    public void pinTurnOn(View view) {
+        mapPresenter.turnOnPin1();
+    }
+
+    public void pinTurnOff(View view) {
+        mapPresenter.turnOffPin1();
+    }
+
     private void showPopupMenu(View v, final int locationIsTo) {
         PopupMenu popupMenu = new PopupMenu(this, v, Gravity.CENTER);
         popupMenu.inflate(R.menu.popupmenu); // Для Android 4.0
@@ -416,8 +427,6 @@ public class MapActivity extends AppCompatActivity implements MapView {
     public void setDate(View v) {
         mapPresenter.showDateTimeFragment();
     }
-
-
 
     @Override
     public void showTrack(Date date) {

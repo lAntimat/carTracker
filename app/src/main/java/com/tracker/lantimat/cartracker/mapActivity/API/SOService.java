@@ -30,4 +30,9 @@ public interface SOService {
     Observable<ArrayList<TrackR>> getTrack(@Path("Id") String customerId,
                                           @Query("begin") long begin,
                                           @Query("end") long end);
+    @POST("objects/5a72e01f43af42110079f582/commands/set-digit-out-1-1?streamed=true")
+    Call<Gson> turnOnPin1();
+
+    @POST("objects/5a72e01f43af42110079f582/commands/set-digit-out-1-0?streamed=true")
+    Call<Gson> turnOffPin1();
 }

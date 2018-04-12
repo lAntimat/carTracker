@@ -2,6 +2,8 @@ package com.tracker.lantimat.cartracker.utils;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 
 import com.tracker.lantimat.cartracker.mapActivity.API.RetrofitClient;
 
@@ -13,7 +15,7 @@ public class MyApplication extends Application {
 
     private static MyApplication instance;
 
-    public static MyApplication getInstance() {
+    public static synchronized MyApplication getInstance() {
         return instance;
     }
 

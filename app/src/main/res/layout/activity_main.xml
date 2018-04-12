@@ -69,9 +69,32 @@
         android:id="@+id/button6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/button5"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/button5"
-        android:layout_marginTop="41dp"
         android:onClick="openKotlinActivity"
         android:text="Котлин" />
+
+    <com.tracker.lantimat.cartracker.forDriver.ImageWithTextButton
+        android:id="@+id/btn1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/button3"
+        android:layout_below="@+id/button5"
+        android:layout_marginEnd="7dp"
+        android:layout_marginTop="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:selectableItemBackground"
+        android:gravity="center"
+        app:image="@drawable/ic_car_black_36dp"
+        app:text="text" />
+
+    <Button
+        android:id="@+id/button9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/button6"
+        android:onClick="openForDriverActivity"
+        android:text="For Driver" />
 </RelativeLayout>

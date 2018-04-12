@@ -12,6 +12,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
 import com.tracker.lantimat.cartracker.mapActivity.API.ApiUtils;
 import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
 import com.tracker.lantimat.cartracker.mapActivity.API.SOService;
@@ -39,6 +40,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -101,8 +105,8 @@ public class MapPresenter {
         if (carSelectedPosition == -1) return;
         setMode(Mode.TRACK_LOADING);
 
-        begin = 1513677600000L;
-        end = 1513688400000L;
+        //begin = 1513677600000L;
+        //end = 1513688400000L;
         mService.getTrack(arCarsR.get(carSelectedPosition).get_id(), begin, end)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -164,20 +168,43 @@ public class MapPresenter {
     public void startGetObjectSchedule() {
         //ArrayList<CarsR> carsR = new ArrayList<>();
         Scheduler scheduler = Schedulers.from(Executors.newSingleThreadExecutor());
-        disposable = Observable.interval(5, TimeUnit.SECONDS)
+        disposable = Observable.interval(0,60, TimeUnit.SECONDS)
                 .flatMap(n ->
                         mService.getObjects()
                                 .retry(3)
                                 .subscribeOn(scheduler))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(carsRS -> {
-                    //Log.d(TAG, "RxJava work ohuet`");
+
+                /*.subscribe(carsRS -> {
+
                     arCarsR.clear();
                     arCarsR.addAll(carsRS);
                     if(mapView!= null) {
                         mapView.showCars(arCarsR, carSelectedPosition); //Отображаем машины на карте
                         if (carSelectedPosition != -1)
                             mapView.showCarInfo(arCarsR.get(carSelectedPosition), stateFromApiToCarState(arCarsR.get(carSelectedPosition).getState())); //отображаем информацию о выделенной машине
+                    }
+                })*/
+                .subscribeWith(new DisposableObserver<ArrayList<CarsR>>() {
+                    @Override
+                    public void onNext(ArrayList<CarsR> carsRS) {
+                        arCarsR.clear();
+                        arCarsR.addAll(carsRS);
+                        if(mapView!= null) {
+                            mapView.showCars(arCarsR, carSelectedPosition); //Отображаем машины на карте
+                            if (carSelectedPosition != -1)
+                                mapView.showCarInfo(arCarsR.get(carSelectedPosition), stateFromApiToCarState(arCarsR.get(carSelectedPosition).getState())); //отображаем информацию о выделенной машине
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "error " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
     }
@@ -186,8 +213,8 @@ public class MapPresenter {
         ArrayList<CarState> ar = new ArrayList<>();
         ar.add(new CarState("Угол", String.valueOf(state.getAngle())));
         ar.add(new CarState("Скорость", String.valueOf(state.getSpeed())));
-        ar.add(new CarState("Напряжение батареи", String.valueOf(state.getBatVoltage())));
-        ar.add(new CarState("Уровень топлива", String.valueOf(state.getDriver_message())));
+        //ar.add(new CarState("Напряжение батареи", String.valueOf(state.getBatVoltage())));
+        ar.add(new CarState("Уровень топлива", String.valueOf(state.getFuelLevel())));
         return ar;
     }
 
@@ -198,6 +225,34 @@ public class MapPresenter {
         ar.add(new CarState("Напряжение батареи", String.valueOf(state.getBatVoltage())));
         ar.add(new CarState("Уровень топлива", String.valueOf(state.getDriver_message())));
         return ar;
+    }
+
+    public void turnOnPin1() {
+        mService.turnOnPin1().enqueue(new Callback<Gson>() {
+            @Override
+            public void onResponse(Call<Gson> call, Response<Gson> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Gson> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void turnOffPin1() {
+        mService.turnOnPin1().enqueue(new Callback<Gson>() {
+            @Override
+            public void onResponse(Call<Gson> call, Response<Gson> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Gson> call, Throwable t) {
+
+            }
+        });
     }
 
     public void loadUserInfo(int id) {
@@ -251,7 +306,7 @@ public class MapPresenter {
     }
 
     public void carMarkerClick(int position) {
-        showCarInfo(position);
+        setCar(position);
     }
 
     public void setCar(int position) { //выбираем машину, и она становитсья другого цвета + карта центрируется на ней

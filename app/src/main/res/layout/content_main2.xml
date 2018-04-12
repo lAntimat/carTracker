@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.tracker.lantimat.cartracker.forDriver.Main2Activity"
+    tools:showIn="@layout/activity_main2">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <com.tracker.lantimat.cartracker.forDriver.ImageWithTextButton
+                android:id="@+id/btn4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/button3"
+                android:layout_below="@+id/button5"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:selectableItemBackground"
+                android:gravity="center"
+                android:padding="10dp"
+                app:image="@drawable/bell"
+                app:text="Уведомления"
+                app:tint="@color/md_white_1000" />
+
+            <com.tracker.lantimat.cartracker.forDriver.ImageWithTextButton
+                android:id="@+id/btn5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/button3"
+                android:layout_below="@+id/button5"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:selectableItemBackground"
+                android:padding="10dp"
+                app:image="@drawable/google_maps"
+                app:text="Карта"
+                app:tint="@color/md_white_1000" />
+
+            <com.tracker.lantimat.cartracker.forDriver.ImageWithTextButton
+                android:id="@+id/btn6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/button3"
+                android:layout_below="@+id/button5"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:selectableItemBackground"
+                android:gravity="center"
+                android:padding="10dp"
+                app:image="@drawable/settings_outline"
+                app:text="Настройки"
+                app:tint="@color/md_white_1000" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <com.tracker.lantimat.cartracker.forDriver.ImageWithTextButton
+                android:id="@+id/btn1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/button3"
+                android:layout_below="@+id/button5"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:selectableItemBackground"
+                android:gravity="center"
+                android:padding="10dp"
+                app:image="@drawable/car_trunk"
+                app:text="Откр. багаж."
+                app:tint="@color/md_white_1000" />
+
+            <com.tracker.lantimat.cartracker.forDriver.ImageWithTextButton
+                android:id="@+id/btn2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/button3"
+                android:layout_below="@+id/button5"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:selectableItemBackground"
+                android:gravity="center"
+                android:padding="10dp"
+                app:image="@drawable/car_light"
+                app:text="Поморгать"
+                app:tint="@color/md_white_1000" />
+
+            <com.tracker.lantimat.cartracker.forDriver.ImageWithTextButton
+                android:id="@+id/btn3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/button3"
+                android:layout_below="@+id/button5"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:selectableItemBackground"
+                android:gravity="center"
+                android:padding="10dp"
+                app:image="@drawable/car_locked"
+                app:text="Открыть двери"
+                app:tint="@color/md_white_1000" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"></LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/recycler_item_for_driver_main_page_stats" />
+        </LinearLayout>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

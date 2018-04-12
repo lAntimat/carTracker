@@ -5,7 +5,7 @@
     android:id="@+id/bottom_sheet_car"
     android:layout_width="match_parent"
     android:layout_height="340dp"
-    android:background="#eeeeee"
+    android:background="@color/colorPrimaryDark1"
     android:clickable="true"
     android:orientation="vertical"
     app:behavior_hideable="true"
@@ -58,7 +58,8 @@
                 android:gravity="center"
                 android:paddingBottom="5dp"
                 android:singleLine="true"
-                android:text="Model" />
+                android:text="Model"
+                android:textColor="@color/md_white_1000" />
 
             <ImageView
                 android:id="@+id/ivPrev"
@@ -68,7 +69,7 @@
                 android:layout_centerVertical="true"
                 android:foreground="?attr/selectableItemBackground"
                 android:padding="5dp"
-                app:srcCompat="@drawable/ic_menu_left_black_36dp" />
+                app:srcCompat="@drawable/ic_menu_left_white_36dp" />
 
             <ImageView
                 android:id="@+id/ivNext"
@@ -78,7 +79,7 @@
                 android:layout_centerVertical="true"
                 android:foreground="?attr/selectableItemBackground"
                 android:padding="5dp"
-                app:srcCompat="@drawable/ic_menu_right_black_36dp" />
+                app:srcCompat="@drawable/ic_menu_right_white_36dp" />
 
             <TextView
                 android:id="@+id/tvSubTitle"
@@ -87,7 +88,8 @@
                 android:layout_below="@+id/tvTitle"
                 android:layout_marginLeft="10dp"
                 android:layout_toEndOf="@+id/ivPrev"
-                android:text="X663AO116RUS" />
+                android:text="X663AO116RUS"
+                android:textColor="@color/md_white_1000" />
 
             <TextView
                 android:id="@+id/tvSpeed"
@@ -97,7 +99,8 @@
                 android:layout_alignBottom="@+id/tvSubTitle"
                 android:layout_alignStart="@+id/tvStatus"
                 android:layout_toStartOf="@+id/ivNext"
-                android:text="50 км/ч" />
+                android:text="50 км/ч"
+                android:textColor="@color/md_white_1000" />
 
             <TextView
                 android:id="@+id/tvStatus"
@@ -106,7 +109,8 @@
                 android:layout_alignBaseline="@+id/tvTitle"
                 android:layout_alignBottom="@+id/tvTitle"
                 android:layout_toStartOf="@+id/ivNext"
-                android:text="В движении" />
+                android:text="В движении"
+                android:textColor="@color/md_white_1000" />
 
         </RelativeLayout>
 

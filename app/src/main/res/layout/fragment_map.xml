@@ -74,4 +74,20 @@
         android:text="Маршрут"
         android:visibility="invisible" />
 
+    <Button
+        android:id="@+id/button7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="pinTurnOn"
+        android:text="ON PIN1" />
+
+    <Button
+        android:id="@+id/button8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageButton4"
+        android:layout_toEndOf="@+id/btnShow"
+        android:onClick="pinTurnOff"
+        android:text="OFF PIN1" />
+
 </RelativeLayout>

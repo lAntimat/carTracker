@@ -19,14 +19,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".mapActivity.MapActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"/>
+        <activity
+            android:name=".mapActivity.MapActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity android:name=".TrackerEmulatorActivity" />
 
         <service android:name=".MyLocationService" />
@@ -57,7 +63,11 @@
         <activity
             android:name=".Kotlin.MainKotlinActivity"
             android:label="@string/title_activity_main_kotlin"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".forDriver.Main2Activity"
+            android:label="@string/title_activity_main2"
+            android:theme="@style/AppTheme2"></activity>
     </application>
 
 </manifest>

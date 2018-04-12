@@ -104,7 +104,7 @@ public class BottomSheetsTrack {
     }
 
     public void setSpeed(Double speed) {
-        tvWayLength.setText("Скорость " + speed * 3.6);
+        tvWayLength.setText("Скорость " + speed);
     }
 
     public void setSeekBarMax(int max) {
