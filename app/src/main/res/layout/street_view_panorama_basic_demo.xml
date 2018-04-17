@@ -29,10 +29,10 @@
 
         <fragment
             android:id="@+id/streetviewpanorama"
+            class="com.google.android.gms.maps.SupportStreetViewPanoramaFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            class="com.google.android.gms.maps.SupportStreetViewPanoramaFragment" />
+            android:layout_weight="0" />
 
         <fragment
             android:id="@+id/map"

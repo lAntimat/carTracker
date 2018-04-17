@@ -1,4 +1,4 @@
-package com.tracker.lantimat.cartracker.forDriver;
+package com.tracker.lantimat.cartracker.forDriver.mainInfoFragment;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -12,9 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.tracker.lantimat.cartracker.R;
-import com.tracker.lantimat.cartracker.mapActivity.models.CarState;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -47,8 +45,8 @@ public class MainStatesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         ((ViewHolder) holder).tvTitle.setText(mList.get(position).title);
         ((ViewHolder) holder).tvText.setText(mList.get(position).text);
 
-        Drawable drawable = ContextCompat.getDrawable(context, mList.get(position).img);
-        if (drawable!=null) {
+        if (mList.get(position).img!=-1) {
+            Drawable drawable = ContextCompat.getDrawable(context, mList.get(position).img);
             ((ViewHolder) holder).imageView.setVisibility(View.VISIBLE);
             ((ViewHolder) holder).imageView.setImageDrawable(drawable);
             ((ViewHolder) holder).imageView.setColorFilter(ContextCompat.getColor(context, R.color.colorAccent1));

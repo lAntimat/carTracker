@@ -71,8 +71,8 @@ public class BottomSheetsCar {
         btnNext = (ImageView) l.findViewById(R.id.ivNext);
         btnPrev = (ImageView) l.findViewById(R.id.ivPrev);
 
-        peekContent = (RelativeLayout) l.findViewById(R.id.peek_content);
-        peekProgressBar = (RelativeLayout) l.findViewById(R.id.peek_progress);
+        peekContent =  l.findViewById(R.id.peek_content);
+        peekProgressBar =  l.findViewById(R.id.peek_progress);
 
         listeners();
     }

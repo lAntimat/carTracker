@@ -26,6 +26,9 @@ public interface SOService {
     @GET("objects")
     Observable<ArrayList<CarsR>> getObjects();
 
+    @GET("objects/id/packets")
+    Observable<ArrayList<CarsR>> getObjects(String id);
+
     @GET("objects/{Id}/packets")
     Observable<ArrayList<TrackR>> getTrack(@Path("Id") String customerId,
                                           @Query("begin") long begin,

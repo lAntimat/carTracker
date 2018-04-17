@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.tracker.lantimat.cartracker.forDriver.Main2Activity"
-    tools:showIn="@layout/activity_main2">
+    tools:showIn="@layout/main_info_fragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,7 +20,7 @@
             android:orientation="horizontal"
             android:weightSum="3">
 
-            <com.tracker.lantimat.cartracker.forDriver.ImageWithTextButton
+            <com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.ImageWithTextButton
                 android:id="@+id/btn4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -33,11 +33,11 @@
                 android:foreground="?android:selectableItemBackground"
                 android:gravity="center"
                 android:padding="10dp"
-                app:image="@drawable/bell"
-                app:text="Уведомления"
+                app:image="@drawable/alert"
+                app:text="Отчеты"
                 app:tint="@color/md_white_1000" />
 
-            <com.tracker.lantimat.cartracker.forDriver.ImageWithTextButton
+            <com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.ImageWithTextButton
                 android:id="@+id/btn5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
                 app:text="Карта"
                 app:tint="@color/md_white_1000" />
 
-            <com.tracker.lantimat.cartracker.forDriver.ImageWithTextButton
+            <com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.ImageWithTextButton
                 android:id="@+id/btn6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -65,8 +65,8 @@
                 android:foreground="?android:selectableItemBackground"
                 android:gravity="center"
                 android:padding="10dp"
-                app:image="@drawable/settings_outline"
-                app:text="Настройки"
+                app:image="@drawable/message_text"
+                app:text="Сообщения"
                 app:tint="@color/md_white_1000" />
         </LinearLayout>
 
@@ -76,7 +76,7 @@
             android:orientation="horizontal"
             android:weightSum="3">
 
-            <com.tracker.lantimat.cartracker.forDriver.ImageWithTextButton
+            <com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.ImageWithTextButton
                 android:id="@+id/btn1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
                 app:text="Откр. багаж."
                 app:tint="@color/md_white_1000" />
 
-            <com.tracker.lantimat.cartracker.forDriver.ImageWithTextButton
+            <com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.ImageWithTextButton
                 android:id="@+id/btn2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -109,7 +109,7 @@
                 app:text="Поморгать"
                 app:tint="@color/md_white_1000" />
 
-            <com.tracker.lantimat.cartracker.forDriver.ImageWithTextButton
+            <com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.ImageWithTextButton
                 android:id="@+id/btn3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

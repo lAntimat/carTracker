@@ -1,4 +1,4 @@
-package com.tracker.lantimat.cartracker.forDriver;
+package com.tracker.lantimat.cartracker.forDriver.mainInfoFragment;
 
 import android.graphics.drawable.Drawable;
 
@@ -9,7 +9,7 @@ import android.graphics.drawable.Drawable;
 public class MainState {
     String title;
     String text;
-    int img;
+    int img = -1;
     int percent = -1;
 
     public MainState(String title, String text, int img, int percent) {

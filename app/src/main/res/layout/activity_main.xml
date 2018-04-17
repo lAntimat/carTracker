@@ -74,7 +74,7 @@
         android:onClick="openKotlinActivity"
         android:text="Котлин" />
 
-    <com.tracker.lantimat.cartracker.forDriver.ImageWithTextButton
+    <com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.ImageWithTextButton
         android:id="@+id/btn1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

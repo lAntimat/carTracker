@@ -189,7 +189,13 @@ public class MapPresenter {
                     @Override
                     public void onNext(ArrayList<CarsR> carsRS) {
                         arCarsR.clear();
-                        arCarsR.addAll(carsRS);
+
+                        for (CarsR car:carsRS
+                             ) {
+                            if(car.get_id().equals("5aa907d3aeb4b811003d4cbb")) arCarsR.add(car);
+                        }
+
+                        //arCarsR.addAll(carsRS);
                         if(mapView!= null) {
                             mapView.showCars(arCarsR, carSelectedPosition); //Отображаем машины на карте
                             if (carSelectedPosition != -1)
@@ -214,7 +220,7 @@ public class MapPresenter {
         ar.add(new CarState("Угол", String.valueOf(state.getAngle())));
         ar.add(new CarState("Скорость", String.valueOf(state.getSpeed())));
         //ar.add(new CarState("Напряжение батареи", String.valueOf(state.getBatVoltage())));
-        ar.add(new CarState("Уровень топлива", String.valueOf(state.getFuelLevel())));
+        ar.add(new CarState("Уровень топлива", String.valueOf(state.getFuel_lev_p())));
         return ar;
     }
 

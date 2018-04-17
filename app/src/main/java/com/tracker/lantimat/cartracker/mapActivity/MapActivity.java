@@ -219,7 +219,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
 
         SOService mService;
         mService = ApiUtils.getSOService();
-        Call<Gson> call = mService.login("kamaz-api", "Aa79372996433");
+        Call<Gson> call = mService.login("kamaz-api", "Ii89600747198");
         call.enqueue(new Callback<Gson>() {
             @Override
             public void onResponse(Call<Gson> call, Response<Gson> response) {
@@ -268,6 +268,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
         //gMapFragment = new GoogleMapFragment();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.map_activity_content_frame, mapFragment, Constants.MAP_FRAGMENT);
+        //ft.replace(R.id.map_activity_content_frame, gMapFragment, Constants.MAP_FRAGMENT);
         ft.commit();
     }
 

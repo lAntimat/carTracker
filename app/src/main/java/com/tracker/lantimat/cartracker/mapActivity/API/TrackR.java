@@ -12,28 +12,28 @@ public class TrackR {
     private String driver_message;
     @SerializedName("ex_dig_out_1")
     @Expose
-    private double ex_dig_out_1;
+    private Boolean ex_dig_out_1;
     @SerializedName("ex_dig_out_5")
     @Expose
-    private Integer ex_dig_out_5;
+    private Boolean ex_dig_out_5;
     @SerializedName("ex_dig_out_4")
     @Expose
-    private Integer ex_dig_out_4;
+    private Boolean ex_dig_out_4;
     @SerializedName("lon")
     @Expose
     private double lon;
     @SerializedName("ex_dig_out_3")
     @Expose
-    private Integer ex_dig_out_3;
+    private Boolean ex_dig_out_3;
     @SerializedName("ex_dig_out_2")
     @Expose
-    private Integer ex_dig_out_2;
+    private Boolean ex_dig_out_2;
     @SerializedName("ex_dig_out_9")
     @Expose
-    private Integer ex_dig_out_9;
+    private Boolean ex_dig_out_9;
     @SerializedName("ex_dig_out_8")
     @Expose
-    private Integer ex_dig_out_8;
+    private Boolean ex_dig_out_8;
     @SerializedName("egts")
     @Expose
     private Boolean egts;
@@ -42,13 +42,13 @@ public class TrackR {
     private double speed;
     @SerializedName("ex_dig_out_7")
     @Expose
-    private Integer ex_dig_out_7;
+    private Boolean ex_dig_out_7;
     @SerializedName("bat-voltage")
     @Expose
     private double batVoltage;
     @SerializedName("ex_dig_out_6")
     @Expose
-    private Integer ex_dig_out_6;
+    private Boolean ex_dig_out_6;
     @SerializedName("gps_odometer")
     @Expose
     private double gps_odometer;
@@ -66,13 +66,13 @@ public class TrackR {
     private double lat;
     @SerializedName("ex_dig_in_2")
     @Expose
-    private Integer ex_dig_in_2;
+    private Boolean ex_dig_in_2;
     @SerializedName("height")
     @Expose
     private double height;
     @SerializedName("ex_dig_in_1")
     @Expose
-    private Integer ex_dig_in_1;
+    private Boolean ex_dig_in_1;
     @SerializedName("mileage")
     @Expose
     private double mileage;
@@ -98,36 +98,24 @@ public class TrackR {
     @Expose
     private double time;
 
-    public String getDriver_message() {
-        return driver_message;
-    }
-
-    public double getEx_dig_out_1() {
-        return ex_dig_out_1;
-    }
-
-    public Integer getEx_dig_out_5() {
+    public Boolean getEx_dig_out_5() {
         return ex_dig_out_5;
     }
 
-    public Integer getEx_dig_out_4() {
+    public Boolean getEx_dig_out_4() {
         return ex_dig_out_4;
     }
 
-    public Integer getEx_dig_out_3() {
+    public Boolean getEx_dig_out_3() {
         return ex_dig_out_3;
     }
 
-    public Integer getEx_dig_out_2() {
+    public Boolean getEx_dig_out_2() {
         return ex_dig_out_2;
     }
 
-    public Integer getEx_dig_out_9() {
-        return ex_dig_out_9;
-    }
-
-    public Integer getEx_dig_out_8() {
-        return ex_dig_out_8;
+    public String getDriver_message() {
+        return driver_message;
     }
 
     public Boolean getEgts() {
@@ -138,16 +126,8 @@ public class TrackR {
         return speed;
     }
 
-    public Integer getEx_dig_out_7() {
-        return ex_dig_out_7;
-    }
-
     public double getBatVoltage() {
         return batVoltage;
-    }
-
-    public Integer getEx_dig_out_6() {
-        return ex_dig_out_6;
     }
 
     public double getGps_odometer() {
@@ -174,17 +154,11 @@ public class TrackR {
         return lat;
     }
 
-    public Integer getEx_dig_in_2() {
-        return ex_dig_in_2;
-    }
 
     public double getHeight() {
         return height;
     }
 
-    public Integer getEx_dig_in_1() {
-        return ex_dig_in_1;
-    }
 
     public double getMileage() {
         return mileage;

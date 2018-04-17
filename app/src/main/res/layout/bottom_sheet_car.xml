@@ -33,10 +33,10 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/apple_keyboard_control" />
 
-        <RelativeLayout
+        <android.support.constraint.ConstraintLayout
             android:id="@+id/peek_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="visible"
             app:layout_constraintHorizontal_bias="0.0"
@@ -47,77 +47,96 @@
             <TextView
                 android:id="@+id/tvTitle"
                 style="@style/Base.DialogWindowTitle.AppCompat"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
                 android:layout_alignWithParentIfMissing="false"
-                android:layout_centerInParent="false"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_toEndOf="@+id/ivPrev"
-                android:gravity="center"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
                 android:paddingBottom="5dp"
                 android:singleLine="true"
                 android:text="Model"
-                android:textColor="@color/md_white_1000" />
+                android:textColor="@color/md_white_1000"
+                app:layout_constraintEnd_toStartOf="@+id/tvStatus"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ivPrev"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/ivPrev"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
                 android:foreground="?attr/selectableItemBackground"
                 android:padding="5dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvSubTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
                 app:srcCompat="@drawable/ic_menu_left_white_36dp" />
 
             <ImageView
                 android:id="@+id/ivNext"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
                 android:foreground="?attr/selectableItemBackground"
                 android:padding="5dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvSpeed"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_menu_right_white_36dp" />
 
             <TextView
                 android:id="@+id/tvSubTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvTitle"
-                android:layout_marginLeft="10dp"
-                android:layout_toEndOf="@+id/ivPrev"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
                 android:text="X663AO116RUS"
-                android:textColor="@color/md_white_1000" />
+                android:textColor="@color/md_white_1000"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/tvSpeed"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/tvTitle"
+                app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
             <TextView
                 android:id="@+id/tvSpeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/tvSubTitle"
-                android:layout_alignBottom="@+id/tvSubTitle"
-                android:layout_alignStart="@+id/tvStatus"
-                android:layout_toStartOf="@+id/ivNext"
+                android:layout_marginEnd="8dp"
                 android:text="50 км/ч"
-                android:textColor="@color/md_white_1000" />
+                android:textColor="@color/md_white_1000"
+                app:layout_constraintBottom_toBottomOf="@+id/tvSubTitle"
+                app:layout_constraintEnd_toStartOf="@+id/ivNext"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/tvStatus"
+                app:layout_constraintTop_toTopOf="@+id/tvSubTitle" />
 
             <TextView
                 android:id="@+id/tvStatus"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/tvTitle"
-                android:layout_alignBottom="@+id/tvTitle"
-                android:layout_toStartOf="@+id/ivNext"
+                android:layout_height="16dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
                 android:text="В движении"
-                android:textColor="@color/md_white_1000" />
+                android:textColor="@color/md_white_1000"
+                app:layout_constraintBottom_toBottomOf="@+id/tvTitle"
+                app:layout_constraintEnd_toStartOf="@+id/ivNext"
+                app:layout_constraintTop_toTopOf="@+id/tvTitle" />
 
-        </RelativeLayout>
+        </android.support.constraint.ConstraintLayout>
 
         <RelativeLayout
             android:id="@+id/peek_progress"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="67dp"
             android:visibility="invisible"
             app:layout_constraintTop_toBottomOf="@+id/imageView">
 

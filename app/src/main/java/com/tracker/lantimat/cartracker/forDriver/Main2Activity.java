@@ -1,8 +1,6 @@
 package com.tracker.lantimat.cartracker.forDriver;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -10,17 +8,18 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
+import com.appizona.yehiahd.fastsave.FastSave;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.tracker.lantimat.cartracker.R;
-import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
-import com.tracker.lantimat.cartracker.mapActivity.adapters.CarsListRecyclerAdapter;
-import com.tracker.lantimat.cartracker.utils.ItemClickSupport;
+import com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.MainInfoFragment;
+import com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.MainState;
+import com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.MainStatesAdapter;
+import com.tracker.lantimat.cartracker.forDriver.profile.ProfileFragment;
+import com.tracker.lantimat.cartracker.forDriver.statistic.StatisticInfoFragment;
 
 import java.util.ArrayList;
 
@@ -28,7 +27,7 @@ import static com.tracker.lantimat.cartracker.utils.MyApplication.getContext;
 
 public class Main2Activity extends AppCompatActivity {
 
-    static final int PAGE_COUNT = 2;
+    static final int PAGE_COUNT = 4;
 
     private RecyclerView recyclerView;
     private MainStatesAdapter adapter;
@@ -40,31 +39,12 @@ public class Main2Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FastSave.init(getApplicationContext());
         setContentView(R.layout.activity_main2);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        initRecyclerView();
-    }
-
-    public void initRecyclerView() {
-
-        ar.add(new MainState("Топливо", "22л", R.drawable.gas_station, 60));
-        ar.add(new MainState("Аккумулятор", "100%/13 V", R.drawable.car_battery));
-        ar.add(new MainState("Двигатель", "", R.drawable.engine_outline));
-
-
-        adapter = new MainStatesAdapter(getContext(), ar);
-
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(adapter);
-
-        ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-            @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-
-            }
-        });
+        initPagerAdapter();
+        setupBottomBar();
     }
 
     private void initPagerAdapter() {
@@ -81,24 +61,24 @@ public class Main2Activity extends AppCompatActivity {
 
 
         //Создаем айтемы
-        AHBottomNavigationItem item1 = new AHBottomNavigationItem(R.string.tab_1, R.drawable.ic_access_point_white_24dp, R.color.colorBottomNavigationPrimary);
-        AHBottomNavigationItem item2 = new AHBottomNavigationItem(R.string.tab_2, R.drawable.ic_newspaper_white_24dp, R.color.colorBottomNavigationPrimary);
-        AHBottomNavigationItem item3 = new AHBottomNavigationItem(R.string.tab_3, R.drawable.ic_instagram_white_24dp, R.color.colorBottomNavigationPrimary);
-        AHBottomNavigationItem item4 = new AHBottomNavigationItem(R.string.tab_4, R.drawable.ic_dots_horizontal_white_24dp, R.color.colorBottomNavigationPrimary);
+        AHBottomNavigationItem item1 = new AHBottomNavigationItem("Главная", R.drawable.home, R.color.colorBottomNavigationPrimary);
+        AHBottomNavigationItem item2 = new AHBottomNavigationItem("Инф.", R.drawable.google_analytics, R.color.colorBottomNavigationPrimary);
+        AHBottomNavigationItem item3 = new AHBottomNavigationItem("Уведомления", R.drawable.bell, R.color.colorBottomNavigationPrimary);
+        AHBottomNavigationItem item4 = new AHBottomNavigationItem("Профиль", R.drawable.account, R.color.colorBottomNavigationPrimary);
 
         //Добавляем в бар
         bottomNavigation.addItem(item1);
         bottomNavigation.addItem(item2);
-        //bottomNavigation.addItem(item3);
-        //bottomNavigation.addItem(item4);
+        bottomNavigation.addItem(item3);
+        bottomNavigation.addItem(item4);
 
         // Manage titles
         bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
 
-        //bottomNavigation.setAccentColor(ContextCompat.getColor(this, R.color.md_blue_900));
+        bottomNavigation.setAccentColor(ContextCompat.getColor(this, R.color.colorAccent1));
 
         // Set background color
-        //bottomNavigation.setDefaultBackgroundColor(Color.parseColor("#FEFEFE"));
+        bottomNavigation.setDefaultBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark1));
 
         // Add or remove notification for each item
         //bottomNavigation.setNotification("1", 2);
@@ -109,34 +89,7 @@ public class Main2Activity extends AppCompatActivity {
         bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
             @Override
             public boolean onTabSelected(int position, boolean wasSelected) {
-                //Toast.makeText(ctx, position + " tab clicked", Toast.LENGTH_SHORT).show();
-                /*Fragment fragment = null;
-                // на основании выбранного элемента меню
-                // вызываем соответственный ему фрагмент
-                switch (position) {
-                    case 0:
-                        //fragment = new RadioFragment();
-                        break;
-                    case 1:
-                        //fragment = new FeedFragment();
-                        break;
-                    case 2:
-                        //fragment = new InstagramFragment();
-                        break;
-                    case 3:
-                        //fragment = new FeedFragment();
-                        break;
-                    default:
-                        break;
-                }
-                if(fragment != null) {
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.content, fragment, fragment.getTag()).commit();
-                }*/
-
                 pager.setCurrentItem(position);
-
-
                 return true;
             }
         });
@@ -163,7 +116,11 @@ public class Main2Activity extends AppCompatActivity {
                 case 0:
                     return new MainInfoFragment();
                 case 1:
-                    return new MainInfoFragment();
+                    return new FullStatsInfoFragment();
+                case 2:
+                    return new StatisticInfoFragment();
+                case 3:
+                    return new ProfileFragment();
             }
             return null;
         }

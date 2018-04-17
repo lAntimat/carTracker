@@ -1,4 +1,4 @@
-package com.tracker.lantimat.cartracker.forDriver;
+package com.tracker.lantimat.cartracker.forDriver.mainInfoFragment;
 
 import android.content.Context;
 import android.content.res.TypedArray;
