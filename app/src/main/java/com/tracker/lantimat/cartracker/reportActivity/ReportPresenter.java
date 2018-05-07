@@ -24,7 +24,7 @@ import com.google.firebase.storage.UploadTask;
 import com.tracker.lantimat.cartracker.Client.TCPCommunicator;
 import com.tracker.lantimat.cartracker.Client.TCPListener;
 import com.tracker.lantimat.cartracker.R;
-import com.tracker.lantimat.cartracker.quantor.ProtocolGS;
+import com.tracker.lantimat.cartracker.quantor.protocolGS;
 import com.tracker.lantimat.cartracker.utils.FbConstants;
 
 import java.io.ByteArrayOutputStream;
@@ -192,12 +192,12 @@ public class ReportPresenter implements TCPListener {
 
         try {
 
-        ProtocolGS.sendreqreport report = new ProtocolGS.sendreqreport(); //Пакет с отчетом
+        protocolGS.sendreqreport report = new protocolGS.sendreqreport(); //Пакет с отчетом
 
-            ProtocolGS protocolGS = new ProtocolGS();
+            protocolGS protocolGS = new protocolGS();
 
-        ProtocolGS.error er = new ProtocolGS.error();
-        ProtocolGS.error[] error = new ProtocolGS.error[2];
+        com.tracker.lantimat.cartracker.quantor.protocolGS.error er = new protocolGS.error();
+        com.tracker.lantimat.cartracker.quantor.protocolGS.error[] error = new protocolGS.error[2];
         error[0] = er;
 
         Bitmap icon = BitmapFactory.decodeResource(context.getResources(),

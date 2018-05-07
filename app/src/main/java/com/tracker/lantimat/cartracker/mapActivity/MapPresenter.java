@@ -1,6 +1,7 @@
 package com.tracker.lantimat.cartracker.mapActivity;
 
 import android.content.Context;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -122,6 +123,9 @@ public class MapPresenter {
                                 }
                             }
 
+                            clearTrack(arTrack);
+                            getDistance(arTrack);
+
 
                             averageSpeed = averageSpeed/arTrack.size();
 
@@ -144,7 +148,75 @@ public class MapPresenter {
                 });
     }
 
-    public void loadCars() {
+    private void clearTrack(ArrayList<Track> arTrack) {
+        int speed = 150;
+        int i = 0, j = 1;
+        ArrayList<Track> arTemp = new ArrayList<>();
+
+        while (arTrack.size() - 1 > i) {
+            Double lat1 = arTrack.get(i).getGeoPoint().getLatitude();
+            Double lon1 = arTrack.get(i).getGeoPoint().getLatitude();
+            Double lat2 = arTrack.get(i + j).getGeoPoint().getLatitude();
+            Double lon2 = arTrack.get(i + j).getGeoPoint().getLatitude();
+            Double time1 = (double) arTrack.get(i).getTimestamp().getTime();
+            Double time2 = (double) arTrack.get(i+j).getTimestamp().getTime();
+            if(getSpeed(lat1, lon1, lat2, lon2, time1, time2) > speed) {
+                j++;
+            } else {
+                arTemp.add(arTrack.get(i));
+                i++;
+                j = 1;
+            }
+        }
+
+        arTrack.clear();
+        arTrack.addAll(arTemp);
+
+    }
+
+    private Double distanceBeetweenTwoPoint(Double lat1, Double lon1, Double lat2, Double lon2) {
+        Double R = 6371e3; // Радиус земли, м
+
+        Double latitude = lat2-lat1;
+        Double longitude = lon2-lon1;
+
+        Double a = Math.sin(latitude/2) * Math.sin(longitude/2) +
+                Math.cos(lon1) * Math.cos(lon2) *
+                        Math.sin(longitude/2) * Math.sin(longitude/2);
+
+        //Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        Double c = 2 * Math.atan2(a*a, (1-a)*(1-a));
+
+        float[] result = new float[1];
+        Location.distanceBetween(lat1, lon1, lat2, lon2, result);
+
+        //return R * c;
+        return (double) result[0];
+    }
+
+    private Double timeBeetweenTwoPoint (Double time1, Double time2) {
+        return time2 - time1;
+    }
+
+    private Double getSpeed(Double lat1, Double lon1, Double lat2, Double lon2, Double time1, Double time2) {
+        return distanceBeetweenTwoPoint(lat1, lon1, lat2, lon2)/(timeBeetweenTwoPoint(time1, time2) / 60000*60);
+    }
+
+    private Double getDistance(ArrayList<Track> ar) {
+        Double distance = 0D;
+        Double distance2 = 0D;
+        for (int i = 0; i < ar.size() - 1; i++) {
+            distance += distanceBeetweenTwoPoint(ar.get(i).getGeoPoint().getLatitude(), ar.get(i).getGeoPoint().getLongitude(), ar.get(i + 1).getGeoPoint().getLatitude(), ar.get(i + 1).getGeoPoint().getLongitude());
+            float[] result = new float[1];
+            Location.distanceBetween(ar.get(i).getGeoPoint().getLatitude(), ar.get(i).getGeoPoint().getLongitude(), ar.get(i + 1).getGeoPoint().getLatitude(), ar.get(i + 1).getGeoPoint().getLongitude(), result);
+            distance2 += result[0];
+        }
+        return distance;
+    }
+
+
+
+        public void loadCars() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 /*        db.collection(FbConstants.CARS)

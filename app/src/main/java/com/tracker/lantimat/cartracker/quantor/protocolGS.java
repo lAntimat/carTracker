@@ -8,7 +8,7 @@ import java.io.IOException;
  * Created by Nikolay Zlotnikov on 24.10.2017.
  */
 
-public class ProtocolGS {
+public class protocolGS {
     public final static int CRC_POLYNOM = 0x31;
     public final static int CRC_PRESET = 0xFF;
     public final static short SIZE_HEAD = 0x5;
@@ -180,7 +180,7 @@ public class ProtocolGS {
             len = (short) ((bytes[2] << 8) ^ bytes[1]);
             crc = bytes[3];
             reserv = bytes[4];
-            if (crc != ProtocolGS.crc8ccitt(bytes, 3)) {
+            if (crc != protocolGS.crc8ccitt(bytes, 3)) {
                 throw new IOException("corrupt CRC");
             }
         }
@@ -208,7 +208,7 @@ public class ProtocolGS {
             res[0] = tag;
             res[1] = (byte) (len & 0xFF);
             res[2] = (byte) ((len >> 8) & 0xFF);
-            res[3] = ProtocolGS.crc8ccitt(res, 3);
+            res[3] = protocolGS.crc8ccitt(res, 3);
             res[4] = reserv;
             return res;
         }
