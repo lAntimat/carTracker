@@ -92,9 +92,11 @@ public class FullStatsInfoFragment extends Fragment {
                     @Override
                     public void onNext(ArrayList<CarsR> cars) {
                         Log.d(TAG, "onComplete");
-                        if(cars!=null && cars.size() > 5) {
+                        if(cars!=null) {
                             arCars.addAll(cars);
-                            updateUI(cars.get(5));
+                            for (CarsR car:cars) {
+                                if(car.get_id().equals("5aa907d3aeb4b811003d4cbb")) updateUI(car);
+                            }
                         }
                     }
 

@@ -32,9 +32,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.tracker.lantimat.cartracker.forDriver.AuthHelper;
+import com.tracker.lantimat.cartracker.forDriver.Main2Activity;
 import com.tracker.lantimat.cartracker.mapActivity.API.ApiUtils;
 import com.tracker.lantimat.cartracker.mapActivity.API.SOService;
 
@@ -120,7 +122,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             public void onClick(View view) {
                 //Intent intent = new Intent(LoginActivity.this, SignInActivity.class);
                 //startActivity(intent);
-                finish();
+                //finish();
             }
         });
 
@@ -223,7 +225,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             AuthHelper.login("", "", new AuthHelper.OnLoginCallback() {
                 @Override
                 public void onSuccess() {
-
+                    Toast.makeText(LoginActivity.this, "Вы успешно авторизовались!", Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(LoginActivity.this, Main2Activity.class));
+                    finish();
                 }
 
                 @Override

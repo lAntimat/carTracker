@@ -120,7 +120,7 @@ public class Main2Activity extends AppCompatActivity {
                 case 2:
                     return new StatisticInfoFragment();
                 case 3:
-                    return new ProfileFragment();
+                    return new FragmentPersonal();
             }
             return null;
         }
