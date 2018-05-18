@@ -139,11 +139,9 @@ public class FullStatsInfoFragment extends Fragment {
 
         ar.clear();
         ar.add(new MainState("Полный пробег", car.getState().getCan_odo_km() + " км"));
-        ar.add(new MainState("Пробег до сброса", car.getState().getCan_odo_p() + " км"));
-        ar.add(new MainState("Суммарное время работы двиг.", car.getState().getUptime()/60 + " ч."));
-        ar.add(new MainState("Топливо", car.getState().getFuel_lev_p() + "%", R.drawable.gas_station, (int) car.getState().getFuel_lev_p()));
-        ar.add(new MainState("Аккумулятор", (int) car.getState().getVoltage() + " V", R.drawable.car_battery));
-        ar.add(new MainState("Температура двигателя", car.getState().getEng_temp() + " `С"));
+        ar.add(new MainState("Потребление топлива", car.getState().getCons_fuel_l() + " л"));
+        ar.add(new MainState("Суммарное время работы двиг.", car.getState().getUptime() + " мин."));
+
         adapter.notifyDataSetChanged();
 
     }

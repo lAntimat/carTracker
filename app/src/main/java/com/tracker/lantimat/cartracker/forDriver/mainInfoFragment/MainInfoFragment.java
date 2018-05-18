@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.tracker.lantimat.cartracker.R;
@@ -48,6 +49,7 @@ public class MainInfoFragment extends Fragment {
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private View.OnClickListener clickListener;
+    private TextView tvTemp;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,7 @@ public class MainInfoFragment extends Fragment {
         v.findViewById(R.id.btn4).setOnClickListener(clickListener);
         v.findViewById(R.id.btn5).setOnClickListener(clickListener);
         collapsingToolbarLayout =  v.findViewById(R.id.collapsingToolbar);
+        tvTemp = v.findViewById(R.id.tvTemp);
         //setSupportActionBar(toolbar);
         initRecyclerView(v);
 
@@ -156,7 +159,10 @@ public class MainInfoFragment extends Fragment {
         ar.add(new MainState("Двигатель",  engine, R.drawable.engine_outline));
         ar.add(new MainState("Топливо", car.getState().getFuel_lev_p() + "%", R.drawable.gas_station, (int) car.getState().getFuel_lev_p()));
         ar.add(new MainState("Аккумулятор", (int) car.getState().getVoltage() + " V", R.drawable.car_battery));
+        ar.add(new MainState("Температура двигателя", (int) car.getState().getEng_temp() + "`С"));
         ar.add(new MainState("Температура в салоне", (int) car.getState().getTemp_inside() + "`С"));
+
+        tvTemp.setText("Погода\n " + (int) car.getState().getTemp_inside());
         adapter.notifyDataSetChanged();
 
     }
