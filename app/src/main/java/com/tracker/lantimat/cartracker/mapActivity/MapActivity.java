@@ -41,9 +41,7 @@ import com.tracker.lantimat.cartracker.mapActivity.fragments.TrackFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.TrackInfoFragment;
 import com.tracker.lantimat.cartracker.mapActivity.fragments.UserInfoFragment;
 import com.tracker.lantimat.cartracker.mapActivity.models.CarState;
-import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
-import com.tracker.lantimat.cartracker.mapActivity.models.Track;
 import com.tracker.lantimat.cartracker.mapActivity.models.TrackInfo;
 import com.tracker.lantimat.cartracker.mapActivity.models.User;
 
@@ -476,7 +474,7 @@ public class MapActivity extends AppCompatActivity implements MapView {
     @Override
     public void showCarInfo(CarsR car, ArrayList<CarState> carState) {
         bottomSheetsCar.setCarName(car.getName());
-        bottomSheetsCar.setCarNumber(car.getType());
+        bottomSheetsCar.setCarNumber(String.valueOf(car.getRegNumber()));
         bottomSheetsCar.setDate(new Date((long) car.getState().getTime()));
         bottomSheetsCar.setSpeed(String.valueOf(car.getState().getSpeed()));
 

@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.Gson;
 import com.tracker.lantimat.cartracker.R;
 import com.tracker.lantimat.cartracker.forDriver.AuthHelper;
 import com.tracker.lantimat.cartracker.mapActivity.API.ApiUtils;
@@ -29,9 +28,6 @@ import java.util.Date;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by GabdrakhmanovII on 28.07.2017.
@@ -100,10 +96,13 @@ public class MainInfoFragment extends Fragment {
                 .subscribeWith(new DisposableObserver<ArrayList<CarsR>>() {
                     @Override
                     public void onNext(ArrayList<CarsR> cars) {
-                        Log.d(TAG, "onComplete");
-                        if(cars!=null && cars.size() > 5) {
-                            arCars.addAll(cars);
-                            updateUI(cars.get(5));
+                        Log.d(TAG, "onNext");
+                        arCars.addAll(cars);
+                        for (CarsR car:cars
+                             ) {
+                            if(car.get_id().equals("5aa907d3aeb4b811003d4cbb")) {
+                                updateUI(car);
+                            }
                         }
                     }
 
@@ -152,9 +151,9 @@ public class MainInfoFragment extends Fragment {
         else engine = "заведен";
 
         ar.add(new MainState("Двигатель",  engine, R.drawable.engine_outline));
-        ar.add(new MainState("Топливо", car.getState().getFuel_lev_p() + "%", R.drawable.gas_station, (int) car.getState().getFuel_lev_p()));
-        ar.add(new MainState("Аккумулятор", (int) car.getState().getVoltage() + " V", R.drawable.car_battery));
-        ar.add(new MainState("Температура в салоне", (int) car.getState().getTemp_inside() + "`С"));
+        ar.add(new MainState("Топливо", car.getState().getFuel_lev_p() + "%", R.drawable.gas_station, Integer.parseInt(car.getState().getFuel_lev_p().toString())));
+        ar.add(new MainState("Аккумулятор", car.getState().getVoltage() + " V", R.drawable.car_battery));
+        ar.add(new MainState("Температура в салоне", car.getState().getTempInside() + "`С"));
         adapter.notifyDataSetChanged();
 
     }

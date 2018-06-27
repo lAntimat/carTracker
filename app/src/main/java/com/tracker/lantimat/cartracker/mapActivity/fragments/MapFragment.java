@@ -32,7 +32,6 @@ import com.tracker.lantimat.cartracker.R;
 import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
 import com.tracker.lantimat.cartracker.mapActivity.API.TrackR;
 import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
-import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
 import com.tracker.lantimat.cartracker.mapActivity.adapters.CarItemizedOverlay;
 import com.tracker.lantimat.cartracker.utils.KindleGeoPointHelper;

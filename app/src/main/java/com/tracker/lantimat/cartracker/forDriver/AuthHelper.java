@@ -59,7 +59,7 @@ public class AuthHelper {
     private static void loginToRighTech(String login, String password, OnLoginCallback onLoginCallback) {
         SOService mService;
         mService = ApiUtils.getSOService();
-        Call<Gson> call = mService.login("kamaz-api", "Ii89600747198");
+        Call<Gson> call = mService.login("driver001", "Ii89600747198");
         call.enqueue(new Callback<Gson>() {
             @Override
             public void onResponse(Call<Gson> call, Response<Gson> response) {

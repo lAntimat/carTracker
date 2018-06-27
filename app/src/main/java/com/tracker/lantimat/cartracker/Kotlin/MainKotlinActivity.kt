@@ -3,12 +3,10 @@ package com.tracker.lantimat.cartracker.Kotlin
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.view.View
 import android.widget.SeekBar
 import com.tracker.lantimat.cartracker.R
 
 import kotlinx.android.synthetic.main.activity_main_kotlin.*
-import android.widget.Toast
 import android.widget.SeekBar.OnSeekBarChangeListener
 
 
@@ -27,11 +25,11 @@ class MainKotlinActivity : AppCompatActivity() {
                     .setAction("Action", null).show()
         }
 
-        textView.setText("TestText")
+        tvName.setText("TestText")
 
         btn.setOnClickListener{view ->
             i++
-            textView.setText("Click number: " + i)
+            tvName.setText("Click number: " + i)
         }
 
         seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
@@ -44,7 +42,7 @@ class MainKotlinActivity : AppCompatActivity() {
             }
 
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                textView.setText("progress " + p1)
+                tvName.setText("progress " + p1)
             }
 
         })

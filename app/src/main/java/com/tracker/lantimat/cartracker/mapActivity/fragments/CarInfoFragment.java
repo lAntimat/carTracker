@@ -56,7 +56,7 @@ public class CarInfoFragment extends Fragment implements MapActivity.CarInfoFrag
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_car_info, null);
-        textView = (TextView) v.findViewById(R.id.textView);
+        textView = (TextView) v.findViewById(R.id.tvName);
 
         initRecyclerView(v);
         initView();

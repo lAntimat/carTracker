@@ -2,12 +2,10 @@ package com.tracker.lantimat.cartracker.forDriver.mainInfoFragment;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,7 +44,7 @@ public class ImageWithTextButton extends LinearLayout {
         layout = (LinearLayout) li.inflate(R.layout.image_with_text, this, true);
 
         imageView = (ImageView) layout.findViewById(R.id.imageView);
-        textView = (TextView) layout.findViewById(R.id.textView);
+        textView = (TextView) layout.findViewById(R.id.tvName);
 
         imageView.setImageDrawable(drawable);
         textView.setText(text);

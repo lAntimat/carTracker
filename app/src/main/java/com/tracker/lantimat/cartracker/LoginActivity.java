@@ -223,7 +223,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             AuthHelper.login("", "", new AuthHelper.OnLoginCallback() {
                 @Override
                 public void onSuccess() {
-
+                    finish();
                 }
 
                 @Override

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -16,13 +15,8 @@ import com.tracker.lantimat.cartracker.R;
 import com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.MainState;
 import com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.MainStatesAdapter;
 import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
-import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
-import com.tracker.lantimat.cartracker.reportActivity.ReportActivity;
-import com.tracker.lantimat.cartracker.utils.ItemClickSupport;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by GabdrakhmanovII on 28.07.2017.

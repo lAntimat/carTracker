@@ -3,14 +3,11 @@ package com.tracker.lantimat.cartracker.mapActivity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import com.tracker.lantimat.cartracker.mapActivity.API.ApiUtils;
@@ -24,7 +21,6 @@ import com.tracker.lantimat.cartracker.mapActivity.models.Mode;
 import com.tracker.lantimat.cartracker.mapActivity.models.Track;
 import com.tracker.lantimat.cartracker.mapActivity.models.TrackInfo;
 import com.tracker.lantimat.cartracker.mapActivity.models.User;
-import com.tracker.lantimat.cartracker.utils.DayUtil;
 import com.tracker.lantimat.cartracker.utils.FbConstants;
 
 import org.osmdroid.util.GeoPoint;
@@ -192,7 +188,8 @@ public class MapPresenter {
 
                         for (CarsR car:carsRS
                              ) {
-                            if(car.get_id().equals("5aa907d3aeb4b811003d4cbb")) arCarsR.add(car);
+                            if(car.get_id().equals("5aa907d3aeb4b811003d4cbb"))
+                                arCarsR.add(car);
                         }
 
                         //arCarsR.addAll(carsRS);
@@ -331,7 +328,7 @@ public class MapPresenter {
         if(carSelectedPosition == arCarsR.size()) carSelectedPosition = 0;
         mapView.showCarInfo(arCarsR.get(carSelectedPosition), stateFromApiToCarState(arCarsR.get(carSelectedPosition).getState()));
         //loadUserInfo(arCarsR.get(position).getDriverId());
-        mapView.showUserInfo(new User(0,0, "", arCarsR.get(carSelectedPosition).getName(), arCarsR.get(carSelectedPosition).getType(), ""));
+        mapView.showUserInfo(new User(0,0, "", arCarsR.get(carSelectedPosition).getName(), arCarsR.get(carSelectedPosition).getRegNumber() + "", ""));
         setMode(Mode.CAR_SELECTED);
     }
 

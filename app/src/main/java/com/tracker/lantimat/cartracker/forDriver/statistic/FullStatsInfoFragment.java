@@ -1,4 +1,4 @@
-package com.tracker.lantimat.cartracker.forDriver;
+package com.tracker.lantimat.cartracker.forDriver.statistic;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,8 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tracker.lantimat.cartracker.R;
-import com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.MainState;
-import com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.MainStatesAdapter;
+import com.tracker.lantimat.cartracker.forDriver.AuthHelper;
+import com.tracker.lantimat.cartracker.forDriver.statistic.models.ChartData;
+import com.tracker.lantimat.cartracker.forDriver.statistic.models.MiniStatisticChart;
 import com.tracker.lantimat.cartracker.mapActivity.API.ApiUtils;
 import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
 import com.tracker.lantimat.cartracker.mapActivity.API.SOService;
@@ -22,9 +23,9 @@ import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
 import com.tracker.lantimat.cartracker.reportActivity.ReportActivity;
 import com.tracker.lantimat.cartracker.utils.ItemClickSupport;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
@@ -39,8 +40,8 @@ public class FullStatsInfoFragment extends Fragment {
     final static String TAG = "FullStatsInfoFragment";
 
     private RecyclerView recyclerView;
-    private MainStatesAdapter adapter;
-    private ArrayList<MainState> ar = new ArrayList<>();
+    private StatsAdapter adapter;
+    private ArrayList<ArrayList<MiniStatisticChart>> ar = new ArrayList<>();
     private ArrayList<CarsR> arCars = new ArrayList<>();
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
@@ -112,11 +113,31 @@ public class FullStatsInfoFragment extends Fragment {
 
 
     public void initRecyclerView(View v) {
-        ar.add(new MainState("Пробег", "230 км"));
-        ar.add(new MainState("Общий пробег", "23406 км"));
-        ar.add(new MainState("Температура двигателя", "90`С"));
+        Random randomGenerator = new Random();
 
-        adapter = new MainStatesAdapter(getContext(), ar);
+        ArrayList<MiniStatisticChart> arMinistatisticChart = new ArrayList<>();
+
+        ArrayList<ChartData> arChartData = new ArrayList<>();
+        for (int i = 0; i <30 ; i++) {
+            arChartData.add(new ChartData(new Date(), new Long(randomGenerator.nextInt(300) )));
+        }
+        arMinistatisticChart.add(new MiniStatisticChart(MiniStatisticChart.DISTANCE, "Средний пройденный путь", arChartData));
+        arChartData = new ArrayList<>();
+        for (int i = 0; i <30 ; i++) {
+            arChartData.add(new ChartData(new Date(), new Long(randomGenerator.nextInt(12) )));
+        }
+        arMinistatisticChart.add(new MiniStatisticChart(MiniStatisticChart.DRIVE_TIME, "Среднее время в пути", arChartData));
+        arChartData = new ArrayList<>();
+        for (int i = 0; i <30 ; i++) {
+            arChartData.add(new ChartData(new Date(), new Long(randomGenerator.nextInt(50) )));
+        }
+
+        arMinistatisticChart.add(new MiniStatisticChart(MiniStatisticChart.FUEL_CONSUMPTION, "Средний расход", arChartData));
+
+        ar.add(arMinistatisticChart);
+        ar.add(arMinistatisticChart);
+
+        adapter = new StatsAdapter(getContext(), ar);
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -136,12 +157,12 @@ public class FullStatsInfoFragment extends Fragment {
         //toolbar.setSubtitle("Последнее обновление " + sf.format(new Date((long) car.getState().getTime())));
 
         ar.clear();
-        ar.add(new MainState("Полный пробег", car.getState().getCan_odo_km() + " км"));
+        /*ar.add(new MainState("Полный пробег", car.getState().getCan_odo_km() + " км"));
         ar.add(new MainState("Пробег до сброса", car.getState().getCan_odo_p() + " км"));
         ar.add(new MainState("Суммарное время работы двиг.", car.getState().getUptime()/60 + " ч."));
         ar.add(new MainState("Топливо", car.getState().getFuel_lev_p() + "%", R.drawable.gas_station, (int) car.getState().getFuel_lev_p()));
         ar.add(new MainState("Аккумулятор", (int) car.getState().getVoltage() + " V", R.drawable.car_battery));
-        ar.add(new MainState("Температура двигателя", car.getState().getEng_temp() + " `С"));
+        ar.add(new MainState("Температура двигателя", car.getState().getEng_temp() + " `С"));*/
         adapter.notifyDataSetChanged();
 
     }

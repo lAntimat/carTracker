@@ -19,7 +19,7 @@ import com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.MainInfoFragme
 import com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.MainState;
 import com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.MainStatesAdapter;
 import com.tracker.lantimat.cartracker.forDriver.profile.ProfileFragment;
-import com.tracker.lantimat.cartracker.forDriver.statistic.StatisticInfoFragment;
+import com.tracker.lantimat.cartracker.forDriver.statistic.FullStatsInfoFragment;
 
 import java.util.ArrayList;
 
@@ -118,7 +118,7 @@ public class Main2Activity extends AppCompatActivity {
                 case 1:
                     return new FullStatsInfoFragment();
                 case 2:
-                    return new StatisticInfoFragment();
+                    return new NotificationFragment();
                 case 3:
                     return new ProfileFragment();
             }

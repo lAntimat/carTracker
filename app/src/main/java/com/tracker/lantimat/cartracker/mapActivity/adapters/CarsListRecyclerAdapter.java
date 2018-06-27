@@ -8,8 +8,6 @@ import android.widget.TextView;
 
 import com.tracker.lantimat.cartracker.R;
 import com.tracker.lantimat.cartracker.mapActivity.API.CarsR;
-import com.tracker.lantimat.cartracker.mapActivity.models.Cars;
-import com.tracker.lantimat.cartracker.reportActivity.Report;
 
 import java.util.ArrayList;
 
@@ -37,7 +35,7 @@ public class CarsListRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
         ((SecondViewHolder) holder).tvTitle.setText(mList.get(position).getName());
-        ((SecondViewHolder) holder).tvMsg.setText(mList.get(position).getType());
+        ((SecondViewHolder) holder).tvMsg.setText(mList.get(position).getRegNumber());
 
     }
     @Override

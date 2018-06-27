@@ -13,8 +13,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.tracker.lantimat.cartracker.R;
-import com.tracker.lantimat.cartracker.mapActivity.API.State;
-import com.tracker.lantimat.cartracker.mapActivity.API.TrackR;
 import com.tracker.lantimat.cartracker.mapActivity.MapActivity;
 import com.tracker.lantimat.cartracker.mapActivity.adapters.CarsInfoAdapter;
 import com.tracker.lantimat.cartracker.mapActivity.models.CarState;
@@ -60,7 +58,7 @@ public class CarInfoInTrackFragment extends Fragment implements MapActivity.CarI
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_car_info, null);
-        textView = (TextView) v.findViewById(R.id.textView);
+        textView = (TextView) v.findViewById(R.id.tvName);
 
         /**Доступ к фрагменту
          /*FragmentManager fm = getActivity().getSupportFragmentManager();
