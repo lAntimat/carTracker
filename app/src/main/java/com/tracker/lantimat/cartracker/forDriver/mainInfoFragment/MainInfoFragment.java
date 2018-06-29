@@ -101,9 +101,12 @@ public class MainInfoFragment extends Fragment {
                     @Override
                     public void onNext(ArrayList<CarsR> cars) {
                         Log.d(TAG, "onComplete");
-                        if(cars!=null && cars.size() > 5) {
-                            arCars.addAll(cars);
-                            updateUI(cars.get(5));
+                        arCars.addAll(cars);
+                        for (CarsR car:cars
+                                ) {
+                            if(car.get_id().equals("5aa907d3aeb4b811003d4cbb")) {
+                                updateUI(car);
+                            }
                         }
                     }
 
@@ -153,8 +156,8 @@ public class MainInfoFragment extends Fragment {
 
         ar.add(new MainState("Двигатель",  engine, R.drawable.engine_outline));
         ar.add(new MainState("Топливо", car.getState().getFuel_lev_p() + "%", R.drawable.gas_station, (int) car.getState().getFuel_lev_p()));
-        ar.add(new MainState("Аккумулятор", (int) car.getState().getVoltage() + " V", R.drawable.car_battery));
-        ar.add(new MainState("Температура в салоне", (int) car.getState().getTemp_inside() + "`С"));
+        ar.add(new MainState("Аккумулятор", car.getState().getVoltage().toString() + " V", R.drawable.car_battery));
+        ar.add(new MainState("Температура в салоне", car.getState().getTempInside().toString() + "`С"));
         adapter.notifyDataSetChanged();
 
     }

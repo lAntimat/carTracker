@@ -172,7 +172,7 @@ public class State{
   private Integer eng_rpm;
   @SerializedName("eng_temp")
   @Expose
-  private Integer eng_temp;
+  private Double eng_temp;
   @SerializedName("hdop")
   @Expose
   private Double hdop;
@@ -430,7 +430,7 @@ public class State{
     return eng_rpm;
   }
 
-  public Integer getEng_temp() {
+  public Double getEng_temp() {
     return eng_temp;
   }
 
