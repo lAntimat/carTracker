@@ -89,8 +89,8 @@
                 android:foreground="?android:selectableItemBackground"
                 android:gravity="center"
                 android:padding="10dp"
-                app:image="@drawable/car_trunk"
-                app:text="Откр. багаж."
+                app:image="@drawable/ic_turn"
+                app:text="Вкл. поворот."
                 app:tint="@color/md_white_1000" />
 
             <com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.ImageWithTextButton

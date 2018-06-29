@@ -72,4 +72,8 @@ public class User {
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
     }
+
+    public String getDisplayName() {
+        return subName + " " + name;
+    }
 }
