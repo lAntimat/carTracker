@@ -13,7 +13,7 @@ public class State{
   private Double hand_break;
   @SerializedName("cons_fuel_l")
   @Expose
-  private Integer cons_fuel_l;
+  private Double cons_fuel_l;
   @SerializedName("int_temp")
   @Expose
   private Double int_temp;
@@ -218,7 +218,7 @@ public class State{
     return hand_break;
   }
 
-  public Integer getCons_fuel_l() {
+  public Double getCons_fuel_l() {
     return cons_fuel_l;
   }
 

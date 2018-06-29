@@ -36,7 +36,7 @@
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:subtitleTextColor="@color/md_white_1000"
-                app:title="Сервисная информация"
+                app:title="Информация"
                 app:titleTextColor="@color/md_white_1000">
 
             </android.support.v7.widget.Toolbar>

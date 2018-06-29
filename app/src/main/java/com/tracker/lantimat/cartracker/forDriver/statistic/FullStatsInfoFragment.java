@@ -137,7 +137,7 @@ public class FullStatsInfoFragment extends Fragment {
         ar.add(arMinistatisticChart);
         ar.add(arMinistatisticChart);
 
-        adapter = new StatsAdapter(getContext(), ar);
+        adapter = new StatsAdapter(getContext(), ar, 9.2f);
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));

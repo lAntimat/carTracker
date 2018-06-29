@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import com.tracker.lantimat.cartracker.R;
 import com.tracker.lantimat.cartracker.forDriver.statistic.models.MiniStatisticChart;
+import com.tracker.lantimat.cartracker.utils.CustomProgressBar;
 
 import java.util.ArrayList;
 
@@ -30,8 +32,11 @@ public class StatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private ArrayList<ArrayList<MiniStatisticChart>> arChart;
     private Context context;
 
+    private final int MARK_VIEW = 0; //position for items type in RecyclerView
+    private final int CHARTS_VIEW = 1;
 
-    public StatsAdapter(Context context, ArrayList<ArrayList<MiniStatisticChart>> arChart, int driveMark) {
+
+    public StatsAdapter(Context context, ArrayList<ArrayList<MiniStatisticChart>> arChart, float driveMark) {
         this.context = context;
         this.arChart = arChart;
 
@@ -39,45 +44,26 @@ public class StatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view;
-
-        //view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_for_driver_main_page_stats, parent, false);
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_chart, parent, false);
-        return new ViewPagerHolder(view);
-
+        if (viewType == CHARTS_VIEW)
+            return new ViewPagerHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_chart, parent, false));
+        else
+            return new DriveMarkHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_drive_mark, parent, false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-//        ((ViewHolder) holder).tvText.setText(mList.get(position).text);
+        if (position == CHARTS_VIEW) {
+            ((ViewPagerHolder) holder).pager.setId(position + 1);
+            ((ViewPagerHolder) holder).pager.setAdapter(new ChartPagerAdapter(((FragmentActivity) context).getSupportFragmentManager(), arChart.get(position)));
+            ((ViewPagerHolder) holder).indicator.setViewPager(((ViewPagerHolder) holder).pager);
+        } else if (position == MARK_VIEW) {
+            ((DriveMarkHolder) holder).markBar.setMax(100);
+            ((DriveMarkHolder) holder).markBar.setProgress(95);
+            ((DriveMarkHolder) holder).markBar.setText("9.5");
+            ((DriveMarkHolder) holder).markBar.setTextColor(ContextCompat.getColor(context, R.color.md_white_1000));
+        }
 
-        /*Object obj = null;
-        obj = mList.get(position);
-        if(obj instanceof String) {
-            ((ViewHolder) holder).tvTitle.setText((String) obj);
-        }*/
-
-
-        ((ViewPagerHolder) holder).pager.setId(position+1);
-
-
-        //((ViewPagerHolder) holder).pager.setAdapter(adapter);
-
-        ((ViewPagerHolder) holder).pager.setAdapter(new ChartPagerAdapter(((FragmentActivity)context).getSupportFragmentManager(), arChart.get(position)));
-        ((ViewPagerHolder) holder).indicator.setViewPager(((ViewPagerHolder) holder).pager);
-
-        /*if (mList.get(position).img!=-1) {
-            Drawable drawable = ContextCompat.getDrawable(context, mList.get(position).img);
-            ((ViewHolder) holder).imageView.setVisibility(View.VISIBLE);
-            ((ViewHolder) holder).imageView.setImageDrawable(drawable);
-            ((ViewHolder) holder).imageView.setColorFilter(ContextCompat.getColor(context, R.color.colorAccent1));
-        } else ((ViewHolder) holder).imageView.setVisibility(View.GONE);
-
-        if (mList.get(position).percent != -1) {
-            ((ViewHolder) holder).progressBar.setVisibility(View.VISIBLE);
-            ((ViewHolder) holder).progressBar.setProgress(mList.get(position).percent);
-        } else ((ViewHolder) holder).progressBar.setVisibility(View.GONE);*/
     }
 
     @Override
@@ -90,22 +76,16 @@ public class StatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public int getItemViewType(int position) {
 
-        return 0;
+        return position;
     }
 
 
     public static class DriveMarkHolder extends RecyclerView.ViewHolder {
-        public TextView tvTitle;
-        public TextView tvText;
-        public ImageView imageView;
-        public ProgressBar progressBar;
+        public CustomProgressBar markBar;
 
         public DriveMarkHolder(View itemView) {
             super(itemView);
-            tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
-            tvText = (TextView) itemView.findViewById(R.id.tvText);
-            imageView = (ImageView) itemView.findViewById(R.id.imageView);
-            progressBar = (ProgressBar) itemView.findViewById(R.id.progressBar);
+            markBar = itemView.findViewById(R.id.mark);
         }
     }
 
@@ -116,7 +96,7 @@ public class StatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public ViewPagerHolder(View itemView) {
             super(itemView);
             pager = itemView.findViewById(R.id.pager);
-            indicator  = itemView.findViewById(R.id.indicator);
+            indicator = itemView.findViewById(R.id.indicator);
         }
     }
 }

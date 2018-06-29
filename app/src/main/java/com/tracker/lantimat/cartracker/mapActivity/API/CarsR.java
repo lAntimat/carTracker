@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 public class CarsR{
   @SerializedName("regNumber")
   @Expose
-  private Integer regNumber;
+  private String regNumber;
   @SerializedName("color")
   @Expose
   private String color;
@@ -16,7 +16,7 @@ public class CarsR{
   private String name;
   @SerializedName("description")
   @Expose
-  private Long description;
+  private String description;
   @SerializedName("vehicleModel")
   @Expose
   private String vehicleModel;
@@ -38,70 +38,48 @@ public class CarsR{
   @SerializedName("status")
   @Expose
   private String status;
-  public void setRegNumber(Integer regNumber){
-   this.regNumber=regNumber;
+
+    public String getRegNumber() {
+        return regNumber;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+  public String getDescription() {
+    return description;
   }
-  public Integer getRegNumber(){
-   return regNumber;
-  }
-  public void setColor(String color){
-   this.color=color;
-  }
-  public String getColor(){
-   return color;
-  }
-  public void setName(String name){
-   this.name=name;
-  }
-  public String getName(){
-   return name;
-  }
-  public void setDescription(Long description){
-   this.description=description;
-  }
-  public Long getDescription(){
-   return description;
-  }
-  public void setVehicleModel(String vehicleModel){
-   this.vehicleModel=vehicleModel;
-  }
-  public String getVehicleModel(){
-   return vehicleModel;
-  }
-  public void setModel(String model){
-   this.model=model;
-  }
-  public String getModel(){
-   return model;
-  }
-  public void setVin(String vin){
-   this.vin=vin;
-  }
-  public String getVin(){
-   return vin;
-  }
-  public void set_id(String _id){
-   this._id=_id;
-  }
-  public String get_id(){
-   return _id;
-  }
-  public void setId(String id){
-   this.id=id;
-  }
-  public String getId(){
-   return id;
-  }
-  public void setState(State state){
-   this.state=state;
-  }
-  public State getState(){
-   return state;
-  }
-  public void setStatus(String status){
-   this.status=status;
-  }
-  public String getStatus(){
-   return status;
-  }
+
+  public String getVehicleModel() {
+        return vehicleModel;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public String getVin() {
+        return vin;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public String getStatus() {
+        return status;
+    }
 }
