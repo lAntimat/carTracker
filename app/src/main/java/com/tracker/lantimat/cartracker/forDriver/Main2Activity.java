@@ -1,5 +1,6 @@
 package com.tracker.lantimat.cartracker.forDriver;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.appizona.yehiahd.fastsave.FastSave;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
@@ -103,6 +105,11 @@ public class Main2Activity extends AppCompatActivity {
         bottomNavigation.setCurrentItem(0,false);
 
     }
+
+    public void openMarkDetail(View view) {
+        startActivity(new Intent(this, MarkDetailActivity.class));
+    }
+
 
     private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 

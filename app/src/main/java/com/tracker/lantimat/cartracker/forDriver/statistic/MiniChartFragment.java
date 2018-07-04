@@ -1,12 +1,15 @@
 package com.tracker.lantimat.cartracker.forDriver.statistic;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -21,6 +24,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.tracker.lantimat.cartracker.R;
+import com.tracker.lantimat.cartracker.forDriver.MarkDetailActivity;
 import com.tracker.lantimat.cartracker.forDriver.statistic.models.ChartData;
 import com.tracker.lantimat.cartracker.forDriver.statistic.models.MiniStatisticChart;
 import com.tracker.lantimat.cartracker.utils.DayAxisValueFormatter;
@@ -32,12 +36,12 @@ import java.util.List;
 
 public class MiniChartFragment extends Fragment {
 
-    private static final String EXTRA_CHART = "charts";
+    public static final String EXTRA_CHART = "charts";
     private MiniStatisticChart chartData;
     protected BarChart mChart;
     private TextView tvValue;
     private TextView tvName;
-
+    private ImageButton ibExpand;
     public MiniChartFragment() {
         // Required empty public constructor
     }
@@ -59,7 +63,7 @@ public class MiniChartFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.viewpager_item_mini_chart, container, false);
-
+        ibExpand = v.findViewById(R.id.ibExpand);
         tvValue = v.findViewById(R.id.tvValue);
         tvName = v.findViewById(R.id.tvName);
         return v;
@@ -70,6 +74,12 @@ public class MiniChartFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         chartData = getArguments().getParcelable(EXTRA_CHART);
+
+        ibExpand.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), MarkDetailActivity.class);
+            intent.putExtra(EXTRA_CHART, chartData);
+            startActivity(intent);
+        });
 
         initChart(view);
 
@@ -93,8 +103,9 @@ public class MiniChartFragment extends Fragment {
         mChart.setTouchEnabled(false);
         // if more than 60 entries are displayed in the chart, no values will be
         // drawn
-        mChart.setMaxVisibleValueCount(15);
-        mChart.zoomToCenter(5, 0);
+        //mChart.setMaxVisibleValueCount(5);
+        mChart.setVisibleXRangeMaximum(5);
+        mChart.zoomToCenter(10, 0);
 
         // scaling can now only be done on x- and y-axis separately
         mChart.setPinchZoom(false);
@@ -115,22 +126,25 @@ public class MiniChartFragment extends Fragment {
         }
 
         long averageConsumption = distance / i;
-        tvName.setText(chartData.title);
 
         switch (chartData.type) {
-            case 1:
+            case MiniStatisticChart.DISTANCE:
+                tvName.setText("Средний пройденный путь");
                 tvValue.setText(averageConsumption + " км");
                 break;
-            case 2:
+            case MiniStatisticChart.DRIVE_TIME:
+                tvName.setText("Среднее время в пути");
                 tvValue.setText(averageConsumption + " час");
                 break;
-            case 3:
+            case MiniStatisticChart.FUEL_CONSUMPTION:
+                tvName.setText("Средний расход");
                 tvValue.setText(averageConsumption + " литр");
                 break;
         }
 
         BarDataSet dataSet = new BarDataSet(entries, ""); // add entries to dataset
         dataSet.setColors(ColorTemplate.PASTEL_COLORS);
+        mChart.moveViewToX(chartData.chart.size());
 
         BarData barData = new BarData(dataSet);
         mChart.setData(barData);

@@ -24,6 +24,7 @@ import com.tracker.lantimat.cartracker.reportActivity.ReportActivity;
 import com.tracker.lantimat.cartracker.utils.ItemClickSupport;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
@@ -41,7 +42,6 @@ public class FullStatsInfoFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private StatsAdapter adapter;
-    private ArrayList<ArrayList<MiniStatisticChart>> ar = new ArrayList<>();
     private ArrayList<CarsR> arCars = new ArrayList<>();
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
@@ -113,31 +113,9 @@ public class FullStatsInfoFragment extends Fragment {
 
 
     public void initRecyclerView(View v) {
-        Random randomGenerator = new Random();
 
-        ArrayList<MiniStatisticChart> arMinistatisticChart = new ArrayList<>();
 
-        ArrayList<ChartData> arChartData = new ArrayList<>();
-        for (int i = 0; i <30 ; i++) {
-            arChartData.add(new ChartData(new Date(), new Long(randomGenerator.nextInt(300) )));
-        }
-        arMinistatisticChart.add(new MiniStatisticChart(MiniStatisticChart.DISTANCE, "Средний пройденный путь", arChartData));
-        arChartData = new ArrayList<>();
-        for (int i = 0; i <30 ; i++) {
-            arChartData.add(new ChartData(new Date(), new Long(randomGenerator.nextInt(12) )));
-        }
-        arMinistatisticChart.add(new MiniStatisticChart(MiniStatisticChart.DRIVE_TIME, "Среднее время в пути", arChartData));
-        arChartData = new ArrayList<>();
-        for (int i = 0; i <30 ; i++) {
-            arChartData.add(new ChartData(new Date(), new Long(randomGenerator.nextInt(50) )));
-        }
-
-        arMinistatisticChart.add(new MiniStatisticChart(MiniStatisticChart.FUEL_CONSUMPTION, "Средний расход", arChartData));
-
-        ar.add(arMinistatisticChart);
-        ar.add(arMinistatisticChart);
-
-        adapter = new StatsAdapter(getContext(), ar, 9.2f);
+        adapter = new StatsAdapter(getContext(), generateTestData(), 9.2f);
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -151,12 +129,50 @@ public class FullStatsInfoFragment extends Fragment {
         });
     }
 
+    private ArrayList<ArrayList<MiniStatisticChart>> generateTestData() {
+
+        ArrayList<ArrayList<MiniStatisticChart>> ar = new ArrayList<>();
+
+        //Генерация рандомного набора данных для графика
+        Random randomGenerator = new Random();
+
+        ArrayList<MiniStatisticChart> arMinistatisticChart = new ArrayList<>();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        int daysCount = calendar.get(Calendar.DAY_OF_YEAR);
+
+        ArrayList<ChartData> arChartData = new ArrayList<>();
+        for (int i = 0; i <daysCount ; i++) {
+            calendar.set(Calendar.DAY_OF_YEAR, i);
+            arChartData.add(new ChartData(calendar.getTime(), new Long(randomGenerator.nextInt(300) )));
+        }
+        arMinistatisticChart.add(new MiniStatisticChart(MiniStatisticChart.DISTANCE, "Пройденный путь", arChartData));
+        arChartData = new ArrayList<>();
+        for (int i = 0; i <daysCount ; i++) {
+            calendar.set(Calendar.DAY_OF_YEAR, i);
+            arChartData.add(new ChartData(calendar.getTime(), new Long(randomGenerator.nextInt(12) )));
+        }
+        arMinistatisticChart.add(new MiniStatisticChart(MiniStatisticChart.DRIVE_TIME, "Время в пути", arChartData));
+        arChartData = new ArrayList<>();
+        for (int i = 0; i <daysCount ; i++) {
+            calendar.set(Calendar.DAY_OF_YEAR, i);
+            arChartData.add(new ChartData(calendar.getTime(), new Long(randomGenerator.nextInt(50) )));
+        }
+
+        arMinistatisticChart.add(new MiniStatisticChart(MiniStatisticChart.FUEL_CONSUMPTION, "Расход топлива", arChartData));
+
+        ar.add(arMinistatisticChart);
+        ar.add(arMinistatisticChart);
+        return ar;
+    }
+
     public void updateUI(CarsR car) {
         //toolbar.setTitle(car.getName());
         //SimpleDateFormat sf = new SimpleDateFormat("HH:mm");
         //toolbar.setSubtitle("Последнее обновление " + sf.format(new Date((long) car.getState().getTime())));
 
-        ar.clear();
+        //ar.clear();
         /*ar.add(new MainState("Полный пробег", car.getState().getCan_odo_km() + " км"));
         ar.add(new MainState("Пробег до сброса", car.getState().getCan_odo_p() + " км"));
         ar.add(new MainState("Суммарное время работы двиг.", car.getState().getUptime()/60 + " ч."));

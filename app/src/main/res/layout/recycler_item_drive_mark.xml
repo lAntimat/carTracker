@@ -12,17 +12,39 @@
     card_view:cardCornerRadius="4dp"
     card_view:cardElevation="4dp">
 
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:foreground="?android:selectableItemBackground"
+        android:padding="10dp"
+        android:text="Балл за вождение"
+        android:textColor="@color/colorAccent1"
+        android:textSize="18sp"
+        card_view:layout_constraintBottom_toTopOf="@+id/mark"
+        card_view:layout_constraintEnd_toEndOf="parent"
+        card_view:layout_constraintStart_toStartOf="parent"
+        card_view:layout_constraintTop_toTopOf="parent" />
+
     <com.tracker.lantimat.cartracker.utils.CustomProgressBar
         android:id="@+id/mark"
         android:layout_width="0dp"
         android:layout_height="250dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:clickable="true"
+        card_view:layout_constraintBottom_toTopOf="@+id/textView"
         card_view:layout_constraintEnd_toEndOf="parent"
-        card_view:layout_constraintHorizontal_bias="1.0"
+        card_view:layout_constraintHorizontal_bias="0.0"
         card_view:layout_constraintStart_toStartOf="parent"
-        card_view:layout_constraintTop_toTopOf="parent" />
+        card_view:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <TextView
         android:id="@+id/textView"
@@ -33,6 +55,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:foreground="?android:selectableItemBackground"
+        android:onClick="openMarkDetail"
         android:padding="10dp"
         android:text="Подробнее"
         android:textColor="@color/colorAccent1"

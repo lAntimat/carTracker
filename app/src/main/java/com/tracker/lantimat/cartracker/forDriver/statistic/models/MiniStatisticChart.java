@@ -12,9 +12,9 @@ import java.util.ArrayList;
 
 public class MiniStatisticChart implements Parcelable {
 
-    public static int DISTANCE = 1;
+    public static final int DISTANCE = 1;
     public static final int DRIVE_TIME = 2;
-    public static int FUEL_CONSUMPTION = 3;
+    public static final int FUEL_CONSUMPTION = 3;
 
     public int type = -1;
     public String title;
