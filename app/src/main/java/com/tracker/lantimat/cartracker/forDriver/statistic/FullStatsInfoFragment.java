@@ -41,7 +41,7 @@ public class FullStatsInfoFragment extends Fragment {
     final static String TAG = "FullStatsInfoFragment";
 
     private RecyclerView recyclerView;
-    private StatsAdapter adapter;
+    private RecyclerStatsAdapter adapter;
     private ArrayList<CarsR> arCars = new ArrayList<>();
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
@@ -115,7 +115,7 @@ public class FullStatsInfoFragment extends Fragment {
     public void initRecyclerView(View v) {
 
 
-        adapter = new StatsAdapter(getContext(), generateTestData(), 9.2f);
+        adapter = new RecyclerStatsAdapter(getContext(), generateTestData(), 9.2f);
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));

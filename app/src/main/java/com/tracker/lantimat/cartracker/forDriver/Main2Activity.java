@@ -20,8 +20,9 @@ import com.tracker.lantimat.cartracker.R;
 import com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.MainInfoFragment;
 import com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.MainState;
 import com.tracker.lantimat.cartracker.forDriver.mainInfoFragment.MainStatesAdapter;
-import com.tracker.lantimat.cartracker.forDriver.profile.ProfileFragment;
 import com.tracker.lantimat.cartracker.forDriver.statistic.FullStatsInfoFragment;
+import com.tracker.lantimat.cartracker.forDriver.statistic.MarkDetailActivity;
+import com.tracker.lantimat.cartracker.forDriver.statistic.StatisticDetailActivity;
 
 import java.util.ArrayList;
 

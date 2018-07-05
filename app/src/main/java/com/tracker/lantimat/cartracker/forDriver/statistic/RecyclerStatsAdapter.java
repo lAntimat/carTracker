@@ -26,7 +26,7 @@ import me.relex.circleindicator.CircleIndicator;
  * Created by GabdrakhmanovII on 03.11.2017.
  */
 
-public class StatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RecyclerStatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<Object> mList;
     private ArrayList<ArrayList<MiniStatisticChart>> arChart;
@@ -36,7 +36,7 @@ public class StatsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final int CHARTS_VIEW = 1;
 
 
-    public StatsAdapter(Context context, ArrayList<ArrayList<MiniStatisticChart>> arChart, float driveMark) {
+    public RecyclerStatsAdapter(Context context, ArrayList<ArrayList<MiniStatisticChart>> arChart, float driveMark) {
         this.context = context;
         this.arChart = arChart;
 

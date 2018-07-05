@@ -1,18 +1,14 @@
-package com.tracker.lantimat.cartracker.forDriver;
+package com.tracker.lantimat.cartracker.forDriver.statistic;
 
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -23,7 +19,6 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.tracker.lantimat.cartracker.R;
-import com.tracker.lantimat.cartracker.forDriver.statistic.MiniChartFragment;
 import com.tracker.lantimat.cartracker.forDriver.statistic.models.ChartData;
 import com.tracker.lantimat.cartracker.forDriver.statistic.models.MiniStatisticChart;
 import com.tracker.lantimat.cartracker.utils.DayAxisValueFormatter;
@@ -31,11 +26,10 @@ import com.tracker.lantimat.cartracker.utils.XYMarkerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class MarkDetailActivity extends AppCompatActivity {
+public class StatisticDetailActivity extends AppCompatActivity {
 
     private BarChart mChart;
     private MiniStatisticChart chartData;
@@ -44,7 +38,7 @@ public class MarkDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mark_detail);
+        setContentView(R.layout.activity_statistic_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -62,9 +56,7 @@ public class MarkDetailActivity extends AppCompatActivity {
     }
 
     private void firstFillTextViews() {
-
         SimpleDateFormat sf = new SimpleDateFormat("dd.MM.yyyy");
-
         Long value = chartData.chart.get(chartData.chart.size() - 1).value;
         Date date = chartData.chart.get(chartData.chart.size() - 1).date;
 
@@ -106,7 +98,7 @@ public class MarkDetailActivity extends AppCompatActivity {
         mChart.setDrawBarShadow(false);
         mChart.setDrawValueAboveBar(true);
 
-        mChart.getDescription().setEnabled(true);
+        //mChart.getDescription().setEnabled(true);
 
         mChart.getXAxis().setTextColor(Color.WHITE);
         mChart.getAxisLeft().setTextColor(Color.WHITE);
@@ -120,7 +112,7 @@ public class MarkDetailActivity extends AppCompatActivity {
         mChart.zoomToCenter(10, 0);
 
         // scaling can now only be done on x- and y-axis separately
-        mChart.setPinchZoom(true);
+        mChart.setPinchZoom(false);
         mChart.setScaleEnabled(true);
 
         mChart.setHighlightFullBarEnabled(true);
@@ -135,7 +127,7 @@ public class MarkDetailActivity extends AppCompatActivity {
         }
 
         BarDataSet dataSet = new BarDataSet(entries, ""); // add entries to dataset
-        dataSet.setColors(ColorTemplate.PASTEL_COLORS);
+        dataSet.setColors(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent1));
         mChart.moveViewToX(chartData.chart.size());
 
         BarData barData = new BarData(dataSet);
@@ -156,10 +148,35 @@ public class MarkDetailActivity extends AppCompatActivity {
         mChart.setMarker(mv); // Set the marker to the chart
 
 
+        onChartClick();
+    }
+
+    private void onChartClick() {
+
+        SimpleDateFormat sf = new SimpleDateFormat("dd.MM.yyyy");
+
         mChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
+                int x = (int) e.getX();
+                Long value = chartData.chart.get(x-1).value;
+                Date date = chartData.chart.get(x-1).date;
+
                 Log.d("onScrollChange", "Selected " + e.getX());
+                switch (chartData.type) {
+                    case MiniStatisticChart.DISTANCE:
+                        tvToday.setText("За " + sf.format(date));
+                        tvTodayValue.setText(value + " км");
+                        break;
+                    case MiniStatisticChart.DRIVE_TIME:
+                        tvToday.setText("За " + sf.format(date));
+                        tvTodayValue.setText(value + " ч");
+                        break;
+                    case MiniStatisticChart.FUEL_CONSUMPTION:
+                        tvToday.setText("За " + sf.format(date));
+                        tvTodayValue.setText(value + " л");
+                        break;
+                }
             }
 
             @Override

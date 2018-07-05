@@ -5,7 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,18 +13,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.tracker.lantimat.cartracker.R;
-import com.tracker.lantimat.cartracker.forDriver.MarkDetailActivity;
 import com.tracker.lantimat.cartracker.forDriver.statistic.models.ChartData;
 import com.tracker.lantimat.cartracker.forDriver.statistic.models.MiniStatisticChart;
 import com.tracker.lantimat.cartracker.utils.DayAxisValueFormatter;
@@ -76,7 +71,7 @@ public class MiniChartFragment extends Fragment {
         chartData = getArguments().getParcelable(EXTRA_CHART);
 
         ibExpand.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), MarkDetailActivity.class);
+            Intent intent = new Intent(getContext(), StatisticDetailActivity.class);
             intent.putExtra(EXTRA_CHART, chartData);
             startActivity(intent);
         });
@@ -143,7 +138,7 @@ public class MiniChartFragment extends Fragment {
         }
 
         BarDataSet dataSet = new BarDataSet(entries, ""); // add entries to dataset
-        dataSet.setColors(ColorTemplate.PASTEL_COLORS);
+        dataSet.setColors(ContextCompat.getColor(getContext(), R.color.colorAccent1));
         mChart.moveViewToX(chartData.chart.size());
 
         BarData barData = new BarData(dataSet);
